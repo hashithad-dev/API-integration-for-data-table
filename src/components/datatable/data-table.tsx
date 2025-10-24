@@ -49,6 +49,7 @@ export function DataTable<TData, TValue>({
     const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
       const [rowSelection, setRowSelection] = React.useState({})
+  const [globalFilter, setGlobalFilter] = React.useState("")
 
 
   const table = useReactTable({
@@ -62,11 +63,13 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
         onColumnVisibilityChange: setColumnVisibility,
             onRowSelectionChange: setRowSelection,
+    onGlobalFilterChange: setGlobalFilter,
     state: {
       sorting,
             columnFilters,
                   columnVisibility,
                         rowSelection,
+      globalFilter,
     },
   })
 
@@ -74,10 +77,10 @@ export function DataTable<TData, TValue>({
         <div>
                   <div className="flex items-center py-4">
         <Input
-          placeholder="Filter title..."
-          value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
+          placeholder="Search users..."
+          value={table.getState().globalFilter ?? ""}
           onChange={(event) =>
-            table.getColumn("title")?.setFilterValue(event.target.value)
+            table.setGlobalFilter(event.target.value)
           }
           className="max-w-sm"
         />
