@@ -65,7 +65,7 @@ export default function UsersPage() {
 
   return (
     <div className="container mx-auto py-10">
-      <h1 className="text-2xl font-bold mb-6 text-center">User List</h1>
+      <h1 className="text-2xl font-bold mb-6 text-center">API Data - Users</h1>
       <DataTable columns={columns} data={data} />
     </div>
   )

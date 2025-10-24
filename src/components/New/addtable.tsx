@@ -28,6 +28,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { z } from "zod"
+import { DataTableColumnHeader } from "../datatable/data-table-column-header"
 
 
 
@@ -41,7 +42,10 @@ const userSchema = z.object({
 })
 
 export default function UsersPage() {
-  const [data, setData] = useState<User[]>([])
+  const [data, setData] = useState<User[]>(() => {
+    const saved = localStorage.getItem('userData')
+    return saved ? JSON.parse(saved) : []
+  })
   const [open, setOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
   const [editingUser, setEditingUser] = useState<User | null>(null)
@@ -83,7 +87,9 @@ export default function UsersPage() {
         email: formData.email,
         phone: formData.phone
       }
-      setData([...data, newUser])
+      const newData = [...data, newUser]
+      setData(newData)
+      localStorage.setItem('userData', JSON.stringify(newData))
       setFormData({ firstName: '', lastName: '', age: '', gender: '', email: '', phone: '' })
       setOpen(false)
     } catch (error) {
@@ -100,7 +106,9 @@ export default function UsersPage() {
   }
 
   const handleDeleteUser = (id: number) => {
-    setData(data.filter(user => user.id !== id))
+    const newData = data.filter(user => user.id !== id)
+    setData(newData)
+    localStorage.setItem('userData', JSON.stringify(newData))
   }
 
   const handleEditUser = (user: User) => {
@@ -132,7 +140,9 @@ export default function UsersPage() {
       email: formData.email,
       phone: formData.phone
     }
-    setData(data.map(user => user.id === editingUser.id ? updatedUser : user))
+    const newData = data.map(user => user.id === editingUser.id ? updatedUser : user)
+    setData(newData)
+    localStorage.setItem('userData', JSON.stringify(newData))
     setFormData({ firstName: '', lastName: '', age: '', gender: '', email: '', phone: '' })
     setEditOpen(false)
     setEditingUser(null)
@@ -142,46 +152,57 @@ export default function UsersPage() {
     {
       accessorKey: "id",
       header: ({ column }) => (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          ID <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+        <DataTableColumnHeader
+        column={column}
+        title="First Name"
+      />
       ),
     },
     {
       accessorKey: "firstName",
       header: ({ column }) => (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          First Name <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+         <DataTableColumnHeader
+        column={column}
+        title="First Name"
+      />
       ),
     },
     {
       accessorKey: "lastName",
       header: ({ column }) => (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Last Name <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+         <DataTableColumnHeader
+        column={column}
+        title="Last Name"
+      />
       ),
     },
     {
       accessorKey: "age",
       header: ({ column }) => (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Age <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+         <DataTableColumnHeader
+        column={column}
+        title="Age"
+      />
       ),
     },
     {
-      accessorKey: "gender",
-      header: "Gender",
-    },
-    {
       accessorKey: "email",
-      header: "Email",
+      header: ({ column }) => (
+         <DataTableColumnHeader
+        column={column}
+        title="Email"
+      />
+      ),
     },
+    
     {
-      accessorKey: "phone",
-      header: "Phone",
+     accessorKey: "phone",
+      header: ({ column }) => (
+         <DataTableColumnHeader
+        column={column}
+        title="Phone"
+      />
+      ),
     },
     {
       id: "actions",
@@ -207,7 +228,7 @@ export default function UsersPage() {
   return (
     <div className="container mx-auto py-10">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Users</h1>
+        <h1 className="text-2xl font-bold">Manual Users</h1>
         <Dialog open={open} onOpenChange={(isOpen) => {
           setOpen(isOpen)
           if (isOpen) {
@@ -216,7 +237,7 @@ export default function UsersPage() {
           }
         }}>
           <DialogTrigger asChild>
-            <Button>Add User</Button>
+            <Button>+ Add User</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
