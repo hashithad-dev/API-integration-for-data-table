@@ -31,6 +31,7 @@ export type User = {
   gender: string
   email: string
   phone: string
+  dateOfBirth: string
 }
 
 // 🔹 Table column definitions

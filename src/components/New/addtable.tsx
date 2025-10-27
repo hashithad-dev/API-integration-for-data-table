@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select"
 import { ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown, MoreHorizontal, Pencil, Trash2 } from "lucide-react"
+import { FaEye, FaEdit, FaTrash } from "react-icons/fa"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,7 +39,8 @@ const userSchema = z.object({
   age: z.string().min(1, "Age must been 18+ required").refine((val) => !isNaN(Number(val)) && Number(val) > 0, "Age must be a positive number"),
   gender: z.string().min(1, "Gender is required"),
   email: z.string().email("Invalid email address"),
-  phone: z.string().min(1, "Phone is required")
+  phone: z.string().min(1, "Phone is required"),
+  dateOfBirth: z.string().min(1, "Date of birth is required")
 })
 
 export default function UsersPage() {
@@ -57,7 +59,8 @@ export default function UsersPage() {
     age: '',
     gender: '',
     email: '',
-    phone: ''
+    phone: '',
+    dateOfBirth: ''
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
 
@@ -79,18 +82,19 @@ export default function UsersPage() {
       userSchema.parse(formData)
       setErrors({})
       const newUser: User = {
-        id: data.length + 1,
+        id: data.length === 0 ? 1 : Math.max(...data.map(u => u.id)) + 1,
         firstName: formData.firstName,
         lastName: formData.lastName,
         age: parseInt(formData.age),
         gender: formData.gender,
         email: formData.email,
-        phone: formData.phone
+        phone: formData.phone,
+        dateOfBirth: formData.dateOfBirth
       }
       const newData = [...data, newUser]
       setData(newData)
       localStorage.setItem('userData', JSON.stringify(newData))
-      setFormData({ firstName: '', lastName: '', age: '', gender: '', email: '', phone: '' })
+      setFormData({ firstName: '', lastName: '', age: '', gender: '', email: '', phone: '', dateOfBirth: '' })
       setOpen(false)
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -119,7 +123,8 @@ export default function UsersPage() {
       age: user.age.toString(),
       gender: user.gender,
       email: user.email,
-      phone: user.phone
+      phone: user.phone,
+      dateOfBirth: user.dateOfBirth
     })
     setEditOpen(true)
   }
@@ -138,12 +143,13 @@ export default function UsersPage() {
       age: parseInt(formData.age),
       gender: formData.gender,
       email: formData.email,
-      phone: formData.phone
+      phone: formData.phone,
+      dateOfBirth: formData.dateOfBirth
     }
     const newData = data.map(user => user.id === editingUser.id ? updatedUser : user)
     setData(newData)
     localStorage.setItem('userData', JSON.stringify(newData))
-    setFormData({ firstName: '', lastName: '', age: '', gender: '', email: '', phone: '' })
+    setFormData({ firstName: '', lastName: '', age: '', gender: '', email: '', phone: '', dateOfBirth: '' })
     setEditOpen(false)
     setEditingUser(null)
   }
@@ -154,7 +160,7 @@ export default function UsersPage() {
       header: ({ column }) => (
         <DataTableColumnHeader
         column={column}
-        title="First Name"
+        title="ID"
       />
       ),
     },
@@ -186,6 +192,15 @@ export default function UsersPage() {
       ),
     },
     {
+      accessorKey: "dateOfBirth",
+      header: ({ column }) => (
+         <DataTableColumnHeader
+        column={column}
+        title="Date of Birth"
+      />
+      ),
+    },
+    {
       accessorKey: "email",
       header: ({ column }) => (
          <DataTableColumnHeader
@@ -211,13 +226,13 @@ export default function UsersPage() {
         return (
           <div className="flex gap-2">
             <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleViewUser(user)}>
-              👁️
+              <FaEye className="h-4 w-4" />
             </Button>
             <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleEditUser(user)}>
-              ✏️
+              <FaEdit className="h-4 w-4" />
             </Button>
             <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDeleteUser(user.id)}>
-              🗑️
+              <FaTrash className="h-4 w-4" />
             </Button>
           </div>
         )
@@ -232,78 +247,86 @@ export default function UsersPage() {
         <Dialog open={open} onOpenChange={(isOpen) => {
           setOpen(isOpen)
           if (isOpen) {
-            setFormData({ firstName: '', lastName: '', age: '', gender: '', email: '', phone: '' })
+            setFormData({ firstName: '', lastName: '', age: '', gender: '', email: '', phone: '', dateOfBirth: '' })
             setErrors({})
           }
         }}>
           <DialogTrigger asChild>
             <Button>+ Add User</Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle>Add New User</DialogTitle>
+              <DialogTitle className="text-lg font-semibold">Add New User</DialogTitle>
             </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <Input
-                  placeholder="First Name"
-                  value={formData.firstName}
-                  onFocus={() => validateField('firstName', formData.firstName)}
-                  onChange={(e) => {
-                    const value = e.target.value
-                    setFormData({...formData, firstName: value})
-                    validateField('firstName', value)
-                  }}
-                />
-                {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>}
+            <div className="grid gap-3 py-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Input
+                    placeholder="First Name"
+                    value={formData.firstName}
+                    className="h-9"
+                    onFocus={() => validateField('firstName', formData.firstName)}
+                    onChange={(e) => {
+                      const value = e.target.value
+                      setFormData({...formData, firstName: value})
+                      validateField('firstName', value)
+                    }}
+                  />
+                  {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
+                </div>
+                <div>
+                  <Input
+                    placeholder="Last Name"
+                    value={formData.lastName}
+                    className="h-9"
+                    onFocus={() => validateField('lastName', formData.lastName)}
+                    onChange={(e) => {
+                      const value = e.target.value
+                      setFormData({...formData, lastName: value})
+                      validateField('lastName', value)
+                    }}
+                  />
+                  {errors.lastName && <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>}
+                </div>
               </div>
-              <div>
-                <Input
-                  placeholder="Last Name"
-                  value={formData.lastName}
-                  onFocus={() => validateField('lastName', formData.lastName)}
-                  onChange={(e) => {
-                    const value = e.target.value
-                    setFormData({...formData, lastName: value})
-                    validateField('lastName', value)
-                  }}
-                />
-                {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>}
-              </div>
-              <div>
-                <Input
-                  type="number"
-                  placeholder="Age"
-                  value={formData.age}
-                  onFocus={() => validateField('age', formData.age)}
-                  onChange={(e) => {
-                    const value = e.target.value
-                    setFormData({...formData, age: value})
-                    validateField('age', value)
-                  }}
-                />
-                {errors.age && <p className="text-red-500 text-sm mt-1">{errors.age}</p>}
-              </div>
-              <div>
-                <Select value={formData.gender} onValueChange={(value) => {
-                  setFormData({...formData, gender: value})
-                  validateField('gender', value)
-                }}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Gender" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Male">Male</SelectItem>
-                    <SelectItem value="Female">Female</SelectItem>
-                  </SelectContent>
-                </Select>
-                {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender}</p>}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Input
+                    type="number"
+                    placeholder="Age"
+                    value={formData.age}
+                    className="h-9"
+                    onFocus={() => validateField('age', formData.age)}
+                    onChange={(e) => {
+                      const value = e.target.value
+                      setFormData({...formData, age: value})
+                      validateField('age', value)
+                    }}
+                  />
+                  {errors.age && <p className="text-red-500 text-xs mt-1">{errors.age}</p>}
+                </div>
+                <div>
+                  <Select value={formData.gender} onValueChange={(value) => {
+                    setFormData({...formData, gender: value})
+                    validateField('gender', value)
+                  }}>
+                    <SelectTrigger className="h-9">
+                      <SelectValue placeholder="Gender" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Male">Male</SelectItem>
+                      <SelectItem value="Female">Female</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {errors.gender && <p className="text-red-500 text-xs mt-1">{errors.gender}</p>}
+                </div>
               </div>
               <div>
                 <Input
                   type="email"
-                  placeholder="Email"
+                  placeholder="Email Address"
                   value={formData.email}
+                  className="h-9"
                   onFocus={() => validateField('email', formData.email)}
                   onChange={(e) => {
                     const value = e.target.value
@@ -311,73 +334,133 @@ export default function UsersPage() {
                     validateField('email', value)
                   }}
                 />
-                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
               </div>
-              <div>
-                <Input
-                  placeholder="Phone"
-                  value={formData.phone}
-                  onFocus={() => validateField('phone', formData.phone)}
-                  onChange={(e) => {
-                    const value = e.target.value
-                    setFormData({...formData, phone: value})
-                    validateField('phone', value)
-                  }}
-                />
-                {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Input
+                    placeholder="Phone Number"
+                    value={formData.phone}
+                    className="h-9"
+                    onFocus={() => validateField('phone', formData.phone)}
+                    onChange={(e) => {
+                      const value = e.target.value
+                      setFormData({...formData, phone: value})
+                      validateField('phone', value)
+                    }}
+                  />
+                  {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
+                </div>
+                <div>
+                  <Input
+                    type="date"
+                    placeholder="Date of Birth"
+                    value={formData.dateOfBirth}
+                    className="h-9"
+                    onFocus={() => validateField('dateOfBirth', formData.dateOfBirth)}
+                    onChange={(e) => {
+                      const value = e.target.value
+                      setFormData({...formData, dateOfBirth: value})
+                      validateField('dateOfBirth', value)
+                    }}
+                  />
+                  {errors.dateOfBirth && <p className="text-red-500 text-xs mt-1">{errors.dateOfBirth}</p>}
+                </div>
               </div>
-              <Button onClick={handleAddUser} className="w-full">
-                Add User
-              </Button>
+              <div className="flex gap-2 pt-2">
+                <Button variant="outline" onClick={() => setOpen(false)} className="flex-1 h-9">
+                  Cancel
+                </Button>
+                <Button onClick={handleAddUser} className="flex-1 h-9">
+                  Add User
+                </Button>
+              </div>
             </div>
           </DialogContent>
         </Dialog>
         
         <Dialog open={editOpen} onOpenChange={setEditOpen}>
-          <DialogContent>
+          <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle>Edit User</DialogTitle>
+              <DialogTitle className="text-lg font-semibold">Edit User</DialogTitle>
             </DialogHeader>
-            <div className="space-y-4">
-              <Input
-                placeholder="First Name"
-                value={formData.firstName}
-                onChange={(e) => setFormData({...formData, firstName: e.target.value})}
-              />
-              <Input
-                placeholder="Last Name"
-                value={formData.lastName}
-                onChange={(e) => setFormData({...formData, lastName: e.target.value})}
-              />
-              <Input
-                type="number"
-                placeholder="Age"
-                value={formData.age}
-                onChange={(e) => setFormData({...formData, age: e.target.value})}
-              />
-              <Select value={formData.gender} onValueChange={(value) => setFormData({...formData, gender: value})}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Gender" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Male">Male</SelectItem>
-                  <SelectItem value="Female">Female</SelectItem>
-                </SelectContent>
-              </Select>
-              <Input
-                type="email"
-                placeholder="Email"
-                value={formData.email}
-                onChange={(e) => setFormData({...formData, email: e.target.value})}
-              />
-              <Input
-                placeholder="Phone"
-                value={formData.phone}
-                onChange={(e) => setFormData({...formData, phone: e.target.value})}
-              />
-              <Button onClick={handleUpdateUser} className="w-full">
-                Update User
-              </Button>
+            <div className="grid gap-3 py-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Input
+                    placeholder="First Name"
+                    value={formData.firstName}
+                    className="h-9"
+                    onChange={(e) => setFormData({...formData, firstName: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <Input
+                    placeholder="Last Name"
+                    value={formData.lastName}
+                    className="h-9"
+                    onChange={(e) => setFormData({...formData, lastName: e.target.value})}
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Input
+                    type="number"
+                    placeholder="Age"
+                    value={formData.age}
+                    className="h-9"
+                    onChange={(e) => setFormData({...formData, age: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <Select value={formData.gender} onValueChange={(value) => setFormData({...formData, gender: value})}>
+                    <SelectTrigger className="h-9">
+                      <SelectValue placeholder="Gender" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Male">Male</SelectItem>
+                      <SelectItem value="Female">Female</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div>
+                <Input
+                  type="email"
+                  placeholder="Email Address"
+                  value={formData.email}
+                  className="h-9"
+                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Input
+                    placeholder="Phone Number"
+                    value={formData.phone}
+                    className="h-9"
+                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <Input
+                    type="date"
+                    placeholder="Date of Birth"
+                    value={formData.dateOfBirth}
+                    className="h-9"
+                    onChange={(e) => setFormData({...formData, dateOfBirth: e.target.value})}
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2 pt-2">
+                <Button variant="outline" onClick={() => setEditOpen(false)} className="flex-1 h-9">
+                  Cancel
+                </Button>
+                <Button onClick={handleUpdateUser} className="flex-1 h-9">
+                  Update User
+                </Button>
+              </div>
             </div>
           </DialogContent>
         </Dialog>
@@ -396,6 +479,7 @@ export default function UsersPage() {
                 <div><strong>Gender:</strong> {viewingUser.gender}</div>
                 <div><strong>Email:</strong> {viewingUser.email}</div>
                 <div><strong>Phone:</strong> {viewingUser.phone}</div>
+                <div><strong>Date of Birth:</strong> {viewingUser.dateOfBirth}</div>
               </div>
             )}
           </DialogContent>
