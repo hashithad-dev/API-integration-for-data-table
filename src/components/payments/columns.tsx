@@ -1,7 +1,7 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, MoreHorizontal } from "lucide-react"
+import { MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -13,13 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Checkbox } from "@/components/ui/checkbox"
 import { DataTableColumnHeader } from "../datatable/data-table-column-header"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+import { ViewIcon } from "../reusable/view-icon"
 import { useState } from "react"
 
 // 🔹 Define your user data type
@@ -144,7 +138,6 @@ export const columns: ColumnDef<User>[] = [
     id: "actions",
     cell: ({ row }) => {
       const user = row.original
-      const [isProfileOpen, setIsProfileOpen] = useState(false)
       const [showCopyMessage, setShowCopyMessage] = useState(false)
 
       const handleCopyEmail = () => {
@@ -154,7 +147,8 @@ export const columns: ColumnDef<User>[] = [
       }
 
       return (
-        <>
+        <div className="flex items-center gap-2">
+          <ViewIcon user={user} />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
@@ -167,10 +161,6 @@ export const columns: ColumnDef<User>[] = [
               <DropdownMenuItem onClick={handleCopyEmail}>
                 Copy Email
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setIsProfileOpen(true)}>
-                View Profile
-              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -179,49 +169,7 @@ export const columns: ColumnDef<User>[] = [
               Email is copied
             </div>
           )}
-
-          <Dialog open={isProfileOpen} onOpenChange={setIsProfileOpen}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>User Profile</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">ID</label>
-                    <p className="text-sm">{user.id}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">Age</label>
-                    <p className="text-sm">{user.age}</p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">First Name</label>
-                    <p className="text-sm">{user.firstName}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">Last Name</label>
-                    <p className="text-sm">{user.lastName}</p>
-                  </div>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Gender</label>
-                  <p className="text-sm">{user.gender}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Email</label>
-                  <p className="text-sm">{user.email}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Phone</label>
-                  <p className="text-sm">{user.phone}</p>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </>
+        </div>
       )
     },
   },

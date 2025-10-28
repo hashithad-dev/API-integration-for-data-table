@@ -30,6 +30,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { z } from "zod"
 import { DataTableColumnHeader } from "../datatable/data-table-column-header"
+import { DeleteIcon } from "../reusable/delete-icon"
+import { ViewIcon } from "../reusable/view-icon"
 
 
 
@@ -51,8 +53,7 @@ export default function UsersPage() {
   const [open, setOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
   const [editingUser, setEditingUser] = useState<User | null>(null)
-  const [viewOpen, setViewOpen] = useState(false)
-  const [viewingUser, setViewingUser] = useState<User | null>(null)
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -129,10 +130,7 @@ export default function UsersPage() {
     setEditOpen(true)
   }
 
-  const handleViewUser = (user: User) => {
-    setViewingUser(user)
-    setViewOpen(true)
-  }
+
 
   const handleUpdateUser = () => {
     if (!editingUser) return
@@ -225,15 +223,11 @@ export default function UsersPage() {
         const user = row.original
         return (
           <div className="flex gap-2">
-            <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleViewUser(user)}>
-              <FaEye className="h-4 w-4" />
-            </Button>
+            <ViewIcon user={user} />
             <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleEditUser(user)}>
               <FaEdit className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDeleteUser(user.id)}>
-              <FaTrash className="h-4 w-4" />
-            </Button>
+            <DeleteIcon onDelete={() => handleDeleteUser(user.id)} />
           </div>
         )
       },
@@ -465,25 +459,7 @@ export default function UsersPage() {
           </DialogContent>
         </Dialog>
         
-        <Dialog open={viewOpen} onOpenChange={setViewOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>User Details</DialogTitle>
-            </DialogHeader>
-            {viewingUser && (
-              <div className="space-y-4">
-                <div><strong>ID:</strong> {viewingUser.id}</div>
-                <div><strong>First Name:</strong> {viewingUser.firstName}</div>
-                <div><strong>Last Name:</strong> {viewingUser.lastName}</div>
-                <div><strong>Age:</strong> {viewingUser.age}</div>
-                <div><strong>Gender:</strong> {viewingUser.gender}</div>
-                <div><strong>Email:</strong> {viewingUser.email}</div>
-                <div><strong>Phone:</strong> {viewingUser.phone}</div>
-                <div><strong>Date of Birth:</strong> {viewingUser.dateOfBirth}</div>
-              </div>
-            )}
-          </DialogContent>
-        </Dialog>
+
       </div>
       <DataTable columns={columns} data={data} />
     </div>
