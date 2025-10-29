@@ -1,9 +1,7 @@
-"use client"
-
 import React, { useState } from "react"
-import { User } from "../payments/columns"
 import { DataTable } from "../datatable/data-table"
 import { Button } from "@/components/ui/button"
+import toast, { Toaster } from 'react-hot-toast'
 import {
   Dialog,
   DialogContent,
@@ -20,18 +18,13 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, MoreHorizontal, Pencil, Trash2 } from "lucide-react"
-import { FaEye, FaEdit, FaTrash } from "react-icons/fa"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import { FaEdit } from "react-icons/fa"
 import { z } from "zod"
 import { DataTableColumnHeader } from "../datatable/data-table-column-header"
 import { DeleteIcon } from "../reusable/delete-icon"
 import { ViewIcon } from "../reusable/view-icon"
+import { useUsers, useCreateUser, useUpdateUser, useDeleteUser, User as QueryUser } from "../../hooks/useUsers"
+import { useRestoreUser } from "../../hooks/useRestoreUser"
 
 
 
@@ -46,13 +39,15 @@ const userSchema = z.object({
 })
 
 export default function UsersPage() {
-  const [data, setData] = useState<User[]>(() => {
-    const saved = localStorage.getItem('userData')
-    return saved ? JSON.parse(saved) : []
-  })
+  const { data = [], isLoading, error } = useUsers()
+  const createUserMutation = useCreateUser()
+  const updateUserMutation = useUpdateUser()
+  const deleteUserMutation = useDeleteUser()
+  const restoreUserMutation = useRestoreUser()
+  
   const [open, setOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
-  const [editingUser, setEditingUser] = useState<User | null>(null)
+  const [editingUser, setEditingUser] = useState<QueryUser | null>(null)
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -82,21 +77,29 @@ export default function UsersPage() {
     try {
       userSchema.parse(formData)
       setErrors({})
-      const newUser: User = {
-        id: data.length === 0 ? 1 : Math.max(...data.map(u => u.id)) + 1,
+      const newUser = {
         firstName: formData.firstName,
         lastName: formData.lastName,
-        age: parseInt(formData.age),
+        age: formData.age,
         gender: formData.gender,
         email: formData.email,
         phone: formData.phone,
         dateOfBirth: formData.dateOfBirth
       }
-      const newData = [...data, newUser]
-      setData(newData)
-      localStorage.setItem('userData', JSON.stringify(newData))
-      setFormData({ firstName: '', lastName: '', age: '', gender: '', email: '', phone: '', dateOfBirth: '' })
-      setOpen(false)
+      createUserMutation.mutate(newUser, {
+        onSuccess: () => {
+          setFormData({ firstName: '', lastName: '', age: '', gender: '', email: '', phone: '', dateOfBirth: '' })
+          setOpen(false)
+          toast.success('User added successfully!', {
+            duration: 3000,
+            position: 'bottom-center',
+          })
+        },
+        onError: (error) => {
+          toast.error('Failed to add user')
+          console.error('Error creating user:', error)
+        }
+      })
     } catch (error) {
       if (error instanceof z.ZodError) {
         const errorMap: Record<string, string> = {}
@@ -110,18 +113,55 @@ export default function UsersPage() {
     }
   }
 
-  const handleDeleteUser = (id: number) => {
-    const newData = data.filter(user => user.id !== id)
-    setData(newData)
-    localStorage.setItem('userData', JSON.stringify(newData))
+  const handleDeleteUser = (id: string) => {
+    const userToDelete = data.find(user => user.id === id)
+    if (!userToDelete) return
+    
+    deleteUserMutation.mutate(id, {
+      onSuccess: () => {
+        toast.success(
+          (t) => (
+            <div className="flex items-center gap-3">
+              <div>
+                <div className="font-medium">{userToDelete.firstName} {userToDelete.lastName} deleted!</div>
+              </div>
+              <button
+                onClick={() => {
+                  toast.dismiss(t.id)
+                  restoreUserMutation.mutate(userToDelete, {
+                    onSuccess: () => {
+                      toast.success('User restored successfully!', {
+                        duration: 2000,
+                        position: 'bottom-center',
+                      })
+                    }
+                  })
+                }}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors"
+              >
+                Undo
+              </button>
+            </div>
+          ),
+          {
+            duration: 5000,
+            position: 'bottom-center',
+          }
+        )
+      },
+      onError: (error) => {
+        toast.error('Failed to delete user')
+        console.error('Error deleting user:', error)
+      }
+    })
   }
 
-  const handleEditUser = (user: User) => {
+  const handleEditUser = (user: QueryUser) => {
     setEditingUser(user)
     setFormData({
       firstName: user.firstName,
       lastName: user.lastName,
-      age: user.age.toString(),
+      age: user.age,
       gender: user.gender,
       email: user.email,
       phone: user.phone,
@@ -134,25 +174,34 @@ export default function UsersPage() {
 
   const handleUpdateUser = () => {
     if (!editingUser) return
-    const updatedUser: User = {
+    const updatedUser: QueryUser = {
       ...editingUser,
       firstName: formData.firstName,
       lastName: formData.lastName,
-      age: parseInt(formData.age),
+      age: formData.age,
       gender: formData.gender,
       email: formData.email,
       phone: formData.phone,
       dateOfBirth: formData.dateOfBirth
     }
-    const newData = data.map(user => user.id === editingUser.id ? updatedUser : user)
-    setData(newData)
-    localStorage.setItem('userData', JSON.stringify(newData))
-    setFormData({ firstName: '', lastName: '', age: '', gender: '', email: '', phone: '', dateOfBirth: '' })
-    setEditOpen(false)
-    setEditingUser(null)
+    updateUserMutation.mutate(updatedUser, {
+      onSuccess: () => {
+        setFormData({ firstName: '', lastName: '', age: '', gender: '', email: '', phone: '', dateOfBirth: '' })
+        setEditOpen(false)
+        setEditingUser(null)
+        toast.success('User updated successfully!', {
+          duration: 3000,
+          position: 'bottom-center',
+        })
+      },
+      onError: (error) => {
+        toast.error('Failed to update user')
+        console.error('Error updating user:', error)
+      }
+    })
   }
 
-  const columns: ColumnDef<User>[] = [
+  const columns: ColumnDef<QueryUser>[] = [
     {
       accessorKey: "id",
       header: ({ column }) => (
@@ -233,6 +282,24 @@ export default function UsersPage() {
       },
     },
   ]
+
+
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen text-lg font-semibold">
+        Loading users...
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-screen text-red-500 font-semibold">
+        Error loading users. Please try again.
+      </div>
+    )
+  }
 
   return (
     <div className="container mx-auto py-10">
@@ -365,8 +432,12 @@ export default function UsersPage() {
                 <Button variant="outline" onClick={() => setOpen(false)} className="flex-1 h-9">
                   Cancel
                 </Button>
-                <Button onClick={handleAddUser} className="flex-1 h-9">
-                  Add User
+                <Button 
+                  onClick={handleAddUser} 
+                  className="flex-1 h-9"
+                  disabled={createUserMutation.isPending}
+                >
+                  {createUserMutation.isPending ? 'Adding...' : 'Add User'}
                 </Button>
               </div>
             </div>
@@ -384,6 +455,7 @@ export default function UsersPage() {
                   <Input
                     placeholder="First Name"
                     value={formData.firstName}
+                    
                     className="h-9"
                     onChange={(e) => setFormData({...formData, firstName: e.target.value})}
                   />
@@ -451,8 +523,12 @@ export default function UsersPage() {
                 <Button variant="outline" onClick={() => setEditOpen(false)} className="flex-1 h-9">
                   Cancel
                 </Button>
-                <Button onClick={handleUpdateUser} className="flex-1 h-9">
-                  Update User
+                <Button 
+                  onClick={handleUpdateUser} 
+                  className="flex-1 h-9"
+                  disabled={updateUserMutation.isPending}
+                >
+                  {updateUserMutation.isPending ? 'Updating...' : 'Update User'}
                 </Button>
               </div>
             </div>
@@ -462,6 +538,7 @@ export default function UsersPage() {
 
       </div>
       <DataTable columns={columns} data={data} />
+      <Toaster />
     </div>
   )
 }

@@ -8,28 +8,16 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Checkbox } from "@/components/ui/checkbox"
 import { DataTableColumnHeader } from "../datatable/data-table-column-header"
 import { ViewIcon } from "../reusable/view-icon"
 import { useState } from "react"
+import { PaymentUser } from "../../hooks/usePayments"
 
-// 🔹 Define your user data type
-export type User = {
-  id: number
-  firstName: string
-  lastName: string
-  age: number
-  gender: string
-  email: string
-  phone: string
-  dateOfBirth: string
-}
-
-// 🔹 Table column definitions
-export const columns: ColumnDef<User>[] = [
+// 🔹 Table column definitions for PaymentUser
+export const paymentColumns: ColumnDef<PaymentUser>[] = [
   {
     id: "select",
     header: ({ table }) => (

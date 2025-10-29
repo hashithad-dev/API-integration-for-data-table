@@ -15,15 +15,10 @@ interface DeleteIconProps {
 
 export const DeleteIcon: React.FC<DeleteIconProps> = ({ onDelete, className = '' }) => {
   const [showConfirm, setShowConfirm] = useState(false)
-  const [showSuccess, setShowSuccess] = useState(false)
 
   const handleConfirmDelete = () => {
-    onDelete()
     setShowConfirm(false)
-    setTimeout(() => {
-      setShowSuccess(true)
-      setTimeout(() => setShowSuccess(false), 2000)
-    }, 100)
+    onDelete()
   }
 
   return (
@@ -37,39 +32,40 @@ export const DeleteIcon: React.FC<DeleteIconProps> = ({ onDelete, className = ''
       </Button>
       
       <Dialog open={showConfirm} onOpenChange={setShowConfirm}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader className="space-y-3">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+              <FaTrash className="h-6 w-6 text-red-600" />
+            </div>
+            <DialogTitle className="text-center text-lg font-semibold text-gray-900">
+              Delete Confirmation
+            </DialogTitle>
           </DialogHeader>
-          <div className="py-4">
-            <p>Are you sure you want to delete this user? This action cannot be undone.</p>
+          <div className="py-4 text-center">
+            <p className="text-sm text-gray-600 leading-relaxed">
+              Are you sure you want to delete this data?
+            </p>
           </div>
-          <div className="flex gap-2 justify-end">
-            <Button variant="outline" onClick={() => setShowConfirm(false)}>
+          <div className="flex gap-3 pt-4">
+            <Button 
+              variant="outline" 
+              className="flex-1 h-10" 
+              onClick={() => setShowConfirm(false)}
+            >
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleConfirmDelete}>
+            <Button 
+              variant="destructive" 
+              className="flex-1 h-10 bg-red-600 hover:bg-red-700" 
+              onClick={handleConfirmDelete}
+            >
               Delete
             </Button>
           </div>
         </DialogContent>
       </Dialog>
       
-      <Dialog open={showSuccess} onOpenChange={setShowSuccess}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Success</DialogTitle>
-          </DialogHeader>
-          <div className="py-4">
-            <p>Deleted successfully!</p>
-          </div>
-          <div className="flex justify-end">
-            <Button onClick={() => setShowSuccess(false)}>
-              OK
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+
     </>
   )
 }

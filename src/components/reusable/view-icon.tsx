@@ -9,10 +9,10 @@ import {
 } from '@/components/ui/dialog'
 
 interface User {
-  id: number
+  id: string | number
   firstName: string
   lastName: string
-  age: number
+  age: string | number
   gender: string
   email: string
   phone: string
