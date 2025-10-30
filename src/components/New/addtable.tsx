@@ -109,6 +109,11 @@ export default function UsersPage() {
           }
         })
         setErrors(errorMap)
+        // Focus on first error field
+        const firstErrorField = error.issues[0]?.path[0] as string
+        if (firstErrorField === 'firstName') {
+          (document.querySelector('input[placeholder="First Name"]') as HTMLInputElement)?.focus()
+        }
       }
     }
   }
@@ -268,12 +273,17 @@ export default function UsersPage() {
     },
     {
       id: "actions",
+      header: "Actions",
       cell: ({ row }) => {
         const user = row.original
         return (
-          <div className="flex gap-2">
+          <div className="flex items-center gap-1">
             <ViewIcon user={user} />
-            <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleEditUser(user)}>
+            <Button 
+              variant="ghost" 
+              className="h-8 w-8 p-0 hover:bg-blue-50 hover:text-blue-600" 
+              onClick={() => handleEditUser(user)}
+            >
               <FaEdit className="h-4 w-4" />
             </Button>
             <DeleteIcon onDelete={() => handleDeleteUser(user.id)} />
@@ -322,6 +332,7 @@ export default function UsersPage() {
             <div className="grid gap-3 py-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
+                  <label className="text-sm font-medium mb-1 block">First Name</label>
                   <Input
                     placeholder="First Name"
                     value={formData.firstName}
@@ -336,6 +347,7 @@ export default function UsersPage() {
                   {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
                 </div>
                 <div>
+                  <label className="text-sm font-medium mb-1 block">Last Name</label>
                   <Input
                     placeholder="Last Name"
                     value={formData.lastName}
@@ -352,6 +364,7 @@ export default function UsersPage() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
+                  <label className="text-sm font-medium mb-1 block">Age</label>
                   <Input
                     type="number"
                     placeholder="Age"
@@ -367,12 +380,13 @@ export default function UsersPage() {
                   {errors.age && <p className="text-red-500 text-xs mt-1">{errors.age}</p>}
                 </div>
                 <div>
+                  <label className="text-sm font-medium mb-1 block">Gender</label>
                   <Select value={formData.gender} onValueChange={(value) => {
                     setFormData({...formData, gender: value})
                     validateField('gender', value)
                   }}>
-                    <SelectTrigger className="h-9">
-                      <SelectValue placeholder="Gender" />
+                    <SelectTrigger className="h-9 w-full">
+                      <SelectValue placeholder="Select Gender" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Male">Male</SelectItem>
@@ -383,6 +397,7 @@ export default function UsersPage() {
                 </div>
               </div>
               <div>
+                <label className="text-sm font-medium mb-1 block">Email Address</label>
                 <Input
                   type="email"
                   placeholder="Email Address"
@@ -399,6 +414,7 @@ export default function UsersPage() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
+                  <label className="text-sm font-medium mb-1 block">Phone Number</label>
                   <Input
                     placeholder="Phone Number"
                     value={formData.phone}
@@ -413,6 +429,7 @@ export default function UsersPage() {
                   {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
                 </div>
                 <div>
+                  <label className="text-sm font-medium mb-1 block">Date of Birth</label>
                   <Input
                     type="date"
                     placeholder="Date of Birth"
@@ -452,15 +469,16 @@ export default function UsersPage() {
             <div className="grid gap-3 py-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
+                  <label className="text-sm font-medium mb-1 block">First Name</label>
                   <Input
                     placeholder="First Name"
                     value={formData.firstName}
-                    
                     className="h-9"
                     onChange={(e) => setFormData({...formData, firstName: e.target.value})}
                   />
                 </div>
                 <div>
+                  <label className="text-sm font-medium mb-1 block">Last Name</label>
                   <Input
                     placeholder="Last Name"
                     value={formData.lastName}
@@ -471,6 +489,7 @@ export default function UsersPage() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
+                  <label className="text-sm font-medium mb-1 block">Age</label>
                   <Input
                     type="number"
                     placeholder="Age"
@@ -480,9 +499,10 @@ export default function UsersPage() {
                   />
                 </div>
                 <div>
+                  <label className="text-sm font-medium mb-1 block">Gender</label>
                   <Select value={formData.gender} onValueChange={(value) => setFormData({...formData, gender: value})}>
-                    <SelectTrigger className="h-9">
-                      <SelectValue placeholder="Gender" />
+                    <SelectTrigger className="h-9 w-full">
+                      <SelectValue placeholder="Select Gender" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Male">Male</SelectItem>
@@ -492,6 +512,7 @@ export default function UsersPage() {
                 </div>
               </div>
               <div>
+                <label className="text-sm font-medium mb-1 block">Email Address</label>
                 <Input
                   type="email"
                   placeholder="Email Address"
@@ -502,6 +523,7 @@ export default function UsersPage() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
+                  <label className="text-sm font-medium mb-1 block">Phone Number</label>
                   <Input
                     placeholder="Phone Number"
                     value={formData.phone}
@@ -510,6 +532,7 @@ export default function UsersPage() {
                   />
                 </div>
                 <div>
+                  <label className="text-sm font-medium mb-1 block">Date of Birth</label>
                   <Input
                     type="date"
                     placeholder="Date of Birth"
