@@ -2,9 +2,9 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { Checkbox } from "@/components/ui/checkbox"
-import { DataTableColumnHeader } from "../datatable/data-table-column-header"
-import { ViewIcon } from "../reusable/view-icon"
-import { PaymentUser } from "../../hooks/usePayments"
+import { DataTableColumnHeader } from "../../components/datatable/data-table-column-header"
+import { ViewIcon } from "../../components/reusable/view-icon"
+import { PaymentUser } from "../../hooks/apiusers"
 
 // 🔹 Table column definitions for PaymentUser
 export const paymentColumns: ColumnDef<PaymentUser>[] = [

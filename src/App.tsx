@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import DemoPage from "./components/payments/page";
-import AddUser from "./components/New/addtable";
-import Navbar from "./components/Layout/Navbar";
+import DemoPage from "./pages/api-user/page";
+import AddUser from "./pages/user/userstable";
+import Navbar from "./components/navbar/Navbar";
 
 function App() {
   return (

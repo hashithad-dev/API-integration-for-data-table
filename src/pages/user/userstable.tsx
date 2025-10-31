@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { DataTable } from "../datatable/data-table"
+import { DataTable } from "../../components/datatable/data-table"
 import { Button } from "@/components/ui/button"
 import toast, { Toaster } from 'react-hot-toast'
 import {
@@ -20,9 +20,9 @@ import {
 import { ColumnDef } from "@tanstack/react-table"
 import { FaEdit } from "react-icons/fa"
 import { z } from "zod"
-import { DataTableColumnHeader } from "../datatable/data-table-column-header"
-import { DeleteIcon } from "../reusable/delete-icon"
-import { ViewIcon } from "../reusable/view-icon"
+import { DataTableColumnHeader } from "../../components/datatable/data-table-column-header"
+import { DeleteIcon } from "../../components/reusable/delete-icon"
+import { ViewIcon } from "../../components/reusable/view-icon"
 import { useUsers, useCreateUser, useUpdateUser, useDeleteUser, User as QueryUser } from "../../hooks/useUsers"
 import { useRestoreUser } from "../../hooks/useRestoreUser"
 

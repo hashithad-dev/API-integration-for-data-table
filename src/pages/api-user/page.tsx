@@ -1,6 +1,6 @@
-import { paymentColumns } from "./payment-columns"
-import { DataTable } from "../datatable/data-table"
-import { usePaymentUsers } from "../../hooks/usePayments"
+import { paymentColumns } from "./apiuserstable"
+import { DataTable } from "../../components/datatable/data-table"
+import { usePaymentUsers } from "../../hooks/apiusers"
 
 export default function UsersPage() {
   const { data = [], isLoading, error } = usePaymentUsers()
