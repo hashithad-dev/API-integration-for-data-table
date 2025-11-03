@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export interface Product {
+export interface PaymentUser {
   id: number
   title: string
   category: string
@@ -9,7 +9,7 @@ export interface Product {
   stock: number
 }
 
-export const fetchProducts = async (): Promise<Product[]> => {
+export const fetchPaymentUsers = async (): Promise<PaymentUser[]> => {
   const response = await axios.get("https://dummyjson.com/products")
   
   return response.data.products.map((product: any) => ({

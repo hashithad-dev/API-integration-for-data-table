@@ -4,7 +4,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { Checkbox } from "@/components/ui/checkbox"
 import { DataTableColumnHeader } from "../../components/datatable/data-table-column-header"
 import { ViewIcon } from "../../components/reusable/view-icon"
-import { PaymentUser } from "../../hooks/apiusers"
+import { PaymentUser } from "../../api/users"
 
 // 🔹 Table column definitions for PaymentUser
 export const paymentColumns: ColumnDef<PaymentUser>[] = [
@@ -42,74 +42,65 @@ export const paymentColumns: ColumnDef<PaymentUser>[] = [
     ),
   },
 
-  // 🔹 First Name
+  // 🔹 title
   {
-    accessorKey: "firstName",
+    accessorKey: "title",
     header: ({ column }) => ( 
       <DataTableColumnHeader
         column={column}
-        title="First Name"
+        title="Title"
       />
     ),
   },
 
-  // 🔹 Last Name
+  // 🔹 category
   {
-    accessorKey: "lastName",
+    accessorKey: "category",
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title="Last Name"
+        title="Category"
       />
     ),
   },
 
-  // 🔹 Age
+  // 🔹price
   {
-    accessorKey: "age",
+    accessorKey: "price",
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title="Age"
+        title="Price"
       />
     ),
   },
 
-  // 🔹 Gender
+  // 🔹discountPercentage
   {
-    accessorKey: "gender",
+    accessorKey: "discountPercentage",
     header: ({ column }) => (
        <DataTableColumnHeader
         column={column}
-        title="Gender"
+        title="DiscountPercentage"
       />
     ),
   },
 
-  // 🔹 Email
+  // 🔹 stock
   {
-    accessorKey: "email",
+    accessorKey: "stock",
     header: ({ column }) => (
        <DataTableColumnHeader
         column={column}
-        title="Email"
+        title="Stock"
       />
     ),
     cell: ({ row }) => (
-      <div className="truncate max-w-[220px]">{row.getValue("email")}</div>
+      <div className="truncate max-w-[220px]">{row.getValue("stock")}</div>
     ),
   },
 
-  // 🔹 Phone
-  {
-    accessorKey: "phone",
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Phone"
-      />
-    ),
-  },
+  
 
   // 🔹 Actions column
   {

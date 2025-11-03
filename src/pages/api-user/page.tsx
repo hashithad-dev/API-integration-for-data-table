@@ -1,9 +1,9 @@
-import { paymentColumns } from "./apiuserstable"
+import { paymentColumns } from "./apiproductstable"
 import { DataTable } from "../../components/datatable/data-table"
-import { usePaymentUsers } from "../../hooks/apiusers"
+import { useApiUsers } from "../../hooks/useApiUsers"
 
 export default function UsersPage() {
-  const { data = [], isLoading, error } = usePaymentUsers()
+  const { data = [], isLoading, error } = useApiUsers()
 
   if (isLoading) {
     return (
@@ -23,7 +23,7 @@ export default function UsersPage() {
 
   return (
     <div className="container mx-auto py-10">
-      <h1 className="text-2xl font-bold mb-6 text-center">API Data - Users</h1>
+      <h1 className="text-2xl font-bold mb-6 text-center">API Data - Products</h1>
       <DataTable columns={paymentColumns} data={data} />
     </div>
   )
