@@ -75,7 +75,7 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-        <div>
+        <div className="bg-white dark:bg-gray-800">
                   <div className="flex items-center py-4">
         <Input
           placeholder="Search users..."
@@ -83,11 +83,11 @@ export function DataTable<TData, TValue>({
           onChange={(event) =>
             table.setGlobalFilter(event.target.value)
           }
-          className="max-w-sm"
+          className="max-w-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
         />
 <DataTableViewOptions table={table} />
       </div>
-    <div className="overflow-hidden rounded-md border">
+    <div className="overflow-hidden rounded-md border border-gray-200 dark:border-gray-700">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -123,7 +123,7 @@ export function DataTable<TData, TValue>({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell colSpan={columns.length} className="h-24 text-center text-gray-900 dark:text-white">
                 No results.
               </TableCell>
             </TableRow>

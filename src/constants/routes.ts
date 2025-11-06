@@ -1,5 +1,7 @@
 export const ROUTES = {
-  HOME: '/',
-  USERS: '/users',
-  PAYMENTS: '/payments'
+  
+  
+  ADMIN: '/admin',
+  ADMIN_API_USERS: '/api-users',
+  ADMIN_LOCAL_USERS: '/local-users'
 } as const

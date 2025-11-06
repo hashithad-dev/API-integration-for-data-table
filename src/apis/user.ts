@@ -9,8 +9,10 @@ export interface Product {
   stock: number
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://dummyjson.com'
+
 export const fetchProducts = async (): Promise<Product[]> => {
-  const response = await axios.get("https://dummyjson.com/products")
+  const response = await axios.get(`${API_BASE_URL}/products`)
   
   return response.data.products.map((product: any) => ({
     id: product.id,

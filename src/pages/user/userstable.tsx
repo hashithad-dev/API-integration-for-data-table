@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button"
 import toast, { Toaster } from 'react-hot-toast'
 
 import { z } from "zod"
-import { useUsers, useCreateUser, useUpdateUser, useDeleteUser, User as QueryUser } from "../../hooks/useUsers"
-import { useRestoreUser } from "../../hooks/useRestoreUser"
+import { useHybridUsers } from "../../hooks/useHybridUsers"
+import { User as QueryUser } from "../../store/userStore"
 import { UserDialog } from "../../components/user/UserDialog"
 import { UserForm } from "../../components/user/UserForm"
 import { createUserColumns } from "../../components/user/UserColumns"
@@ -13,11 +13,7 @@ import { LoadingState, ErrorState } from "../../components/user/LoadingState"
 import { userSchema } from "../../schemas/userSchema"
 
 export default function UsersPage() {
-  const { data = [], isLoading, error } = useUsers()
-  const createUserMutation = useCreateUser()
-  const updateUserMutation = useUpdateUser()
-  const deleteUserMutation = useDeleteUser()
-  const restoreUserMutation = useRestoreUser()
+  const { data = [], isLoading, error, createUserMutation, updateUserMutation, deleteUserMutation, restoreUserMutation } = useHybridUsers()
   
   const [open, setOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
@@ -44,8 +40,6 @@ export default function UsersPage() {
       }
     }
   }
-
-
 
   const handleAddUser = () => {
     try {
@@ -83,7 +77,6 @@ export default function UsersPage() {
           }
         })
         setErrors(errorMap)
-        // Focus on first error field
         const firstErrorField = error.issues[0]?.path[0] as string
         if (firstErrorField === 'firstName') {
           (document.querySelector('input[placeholder="First Name"]') as HTMLInputElement)?.focus()
@@ -149,8 +142,6 @@ export default function UsersPage() {
     setEditOpen(true)
   }
 
-
-
   const handleUpdateUser = () => {
     if (!editingUser) return
     const updatedUser: QueryUser = {
@@ -185,58 +176,58 @@ export default function UsersPage() {
     onDeleteUser: handleDeleteUser
   })
 
-
-
   if (isLoading) return <LoadingState />
   if (error) return <ErrorState />
 
   return (
-    <div className="container mx-auto py-10">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Manual Users</h1>
-        <UserDialog
-          open={open}
-          onOpenChange={(isOpen) => {
-            setOpen(isOpen)
-            if (isOpen) {
-              setFormData({ firstName: '', lastName: '', age: '', gender: '', email: '', phone: '', dateOfBirth: '' })
-              setErrors({})
-            }
-          }}
-          title="Add New User"
-        >
-          <UserForm
-            formData={formData}
-            errors={errors}
-            onFormDataChange={setFormData}
-            onFieldValidation={validateField}
-            onSubmit={handleAddUser}
-            onCancel={() => setOpen(false)}
-            submitText="Add User"
-            isLoading={createUserMutation.isPending}
-          />
-        </UserDialog>
-        <Button onClick={() => setOpen(true)}>+ Add User</Button>
-        <UserDialog
-          open={editOpen}
-          onOpenChange={setEditOpen}
-          title="Edit User"
-        >
-          <UserForm
-            formData={formData}
-            errors={{}}
-            onFormDataChange={setFormData}
-            onSubmit={handleUpdateUser}
-            onCancel={() => setEditOpen(false)}
-            submitText="Update User"
-            isLoading={updateUserMutation.isPending}
-          />
-        </UserDialog>
-        
-
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="container mx-auto py-10">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Manual Users</h1>
+          <UserDialog
+            open={open}
+            onOpenChange={(isOpen) => {
+              setOpen(isOpen)
+              if (isOpen) {
+                setFormData({ firstName: '', lastName: '', age: '', gender: '', email: '', phone: '', dateOfBirth: '' })
+                setErrors({})
+              }
+            }}
+            title="Add New User"
+          >
+            <UserForm
+              formData={formData}
+              errors={errors}
+              onFormDataChange={setFormData}
+              onFieldValidation={validateField}
+              onSubmit={handleAddUser}
+              onCancel={() => setOpen(false)}
+              submitText="Add User"
+              isLoading={createUserMutation.isPending}
+            />
+          </UserDialog>
+          <Button onClick={() => setOpen(true)}>+ Add User</Button>
+          <UserDialog
+            open={editOpen}
+            onOpenChange={setEditOpen}
+            title="Edit User"
+          >
+            <UserForm
+              formData={formData}
+              errors={{}}
+              onFormDataChange={setFormData}
+              onSubmit={handleUpdateUser}
+              onCancel={() => setEditOpen(false)}
+              submitText="Update User"
+              isLoading={updateUserMutation.isPending}
+            />
+          </UserDialog>
+        </div>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+          <DataTable columns={columns} data={data} />
+        </div>
+        <Toaster />
       </div>
-      <DataTable columns={columns} data={data} />
-      <Toaster />
     </div>
   )
 }
