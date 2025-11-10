@@ -12,7 +12,7 @@ export interface PaymentUser {
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL 
 
 export const fetchPaymentUsers = async (): Promise<PaymentUser[]> => {
-  const response = await axios.get(`${API_BASE_URL}/products`)
+  const response = await axios.get(`${API_BASE_URL}/product`)
   
   return response.data.products.map((product: any) => ({
     id: product.id,

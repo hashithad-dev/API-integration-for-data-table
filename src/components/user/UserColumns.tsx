@@ -4,14 +4,14 @@ import { FaEdit } from "react-icons/fa"
 import { DataTableColumnHeader } from "../datatable/data-table-column-header"
 import { DeleteIcon } from "../reusable/delete-icon"
 import { ViewIcon } from "../reusable/view-icon"
-import { User as QueryUser } from "../../store/userStore"
+import { User } from "../../store/userStore"
 
 interface UserColumnsProps {
-  onEditUser: (user: QueryUser) => void
+  onEditUser: (user: User) => void
   onDeleteUser: (id: string) => void
 }
 
-export function createUserColumns({ onEditUser, onDeleteUser }: UserColumnsProps): ColumnDef<QueryUser>[] {
+export function createUserColumns({ onEditUser, onDeleteUser }: UserColumnsProps): ColumnDef<User>[] {
   return [
     {
       accessorKey: "id",

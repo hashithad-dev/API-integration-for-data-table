@@ -5,7 +5,7 @@ import toast, { Toaster } from 'react-hot-toast'
 
 import { z } from "zod"
 import { useHybridUsers } from "../../hooks/useHybridUsers"
-import { User as QueryUser } from "../../store/userStore"
+import { User } from "../../store/userStore"
 import { UserDialog } from "../../components/user/UserDialog"
 import { UserForm } from "../../components/user/UserForm"
 import { createUserColumns } from "../../components/user/UserColumns"
@@ -17,7 +17,7 @@ export default function UsersPage() {
   
   const [open, setOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
-  const [editingUser, setEditingUser] = useState<QueryUser | null>(null)
+  const [editingUser, setEditingUser] = useState<User | null>(null)
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -63,7 +63,7 @@ export default function UsersPage() {
             position: 'bottom-center',
           })
         },
-        onError: (error) => {
+        onError: (error: any) => {
           toast.error('Failed to add user')
           console.error('Error creating user:', error)
         }
@@ -86,7 +86,7 @@ export default function UsersPage() {
   }
 
   const handleDeleteUser = (id: string) => {
-    const userToDelete = data.find(user => user.id === id)
+    const userToDelete = data.find((user: User) => user.id === id)
     if (!userToDelete) return
     
     deleteUserMutation.mutate(id, {
@@ -121,14 +121,14 @@ export default function UsersPage() {
           }
         )
       },
-      onError: (error) => {
+      onError: (error: any) => {
         toast.error('Failed to delete user')
         console.error('Error deleting user:', error)
       }
     })
   }
 
-  const handleEditUser = (user: QueryUser) => {
+  const handleEditUser = (user: User) => {
     setEditingUser(user)
     setFormData({
       firstName: user.firstName,
@@ -144,7 +144,16 @@ export default function UsersPage() {
 
   const handleUpdateUser = () => {
     if (!editingUser) return
-    const updatedUser: QueryUser = {
+    const updatedUser = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      age: formData.age,
+      gender: formData.gender,
+      email: formData.email,
+      phone: formData.phone,
+      dateOfBirth: formData.dateOfBirth
+    }
+    const fullUpdatedUser: User = {
       ...editingUser,
       firstName: formData.firstName,
       lastName: formData.lastName,
@@ -154,7 +163,7 @@ export default function UsersPage() {
       phone: formData.phone,
       dateOfBirth: formData.dateOfBirth
     }
-    updateUserMutation.mutate(updatedUser, {
+    updateUserMutation.mutate(fullUpdatedUser, {
       onSuccess: () => {
         setFormData({ firstName: '', lastName: '', age: '', gender: '', email: '', phone: '', dateOfBirth: '' })
         setEditOpen(false)
@@ -164,7 +173,7 @@ export default function UsersPage() {
           position: 'bottom-center',
         })
       },
-      onError: (error) => {
+      onError: (error: any) => {
         toast.error('Failed to update user')
         console.error('Error updating user:', error)
       }
