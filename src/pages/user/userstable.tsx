@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { DataTable } from "../../components/datatable/data-table"
 import { Button } from "@/components/ui/button"
-import toast, { Toaster } from 'react-hot-toast'
+import { toast } from 'sonner'
 
 import { z } from "zod"
 import { useHybridUsers } from "../../hooks/useHybridUsers"
@@ -55,16 +55,15 @@ export default function UsersPage() {
         dateOfBirth: formData.dateOfBirth
       }
       createUserMutation.mutate(newUser, {
-        onSuccess: () => {
+        onSuccess: (data: any) => {
+          console.log('Create success data:', data)
           setFormData({ firstName: '', lastName: '', age: '', gender: '', email: '', phone: '', dateOfBirth: '' })
           setOpen(false)
-          toast.success('User added successfully!', {
-            duration: 3000,
-            position: 'bottom-center',
-          })
+          toast.success(data.message || '')
         },
         onError: (error: any) => {
-          toast.error('Failed to add user')
+          const errorMessage = error.response?.data?.message || 'Failed to add user'
+          toast.error(errorMessage)
           console.error('Error creating user:', error)
         }
       })
@@ -90,40 +89,32 @@ export default function UsersPage() {
     if (!userToDelete) return
     
     deleteUserMutation.mutate(id, {
-      onSuccess: () => {
-        toast.success(
-          (t) => (
-            <div className="flex items-center gap-3">
-              <div>
-                <div className="font-medium">{userToDelete.firstName} {userToDelete.lastName} deleted!</div>
-              </div>
-              <button
-                onClick={() => {
-                  toast.dismiss(t.id)
-                  restoreUserMutation.mutate(userToDelete, {
-                    onSuccess: () => {
-                      toast.success('User restored successfully!', {
-                        duration: 2000,
-                        position: 'bottom-center',
-                      })
-                    }
-                  })
-                }}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors"
-              >
-                Undo
-              </button>
-            </div>
-          ),
-          {
-            duration: 5000,
-            position: 'bottom-center',
+      onSuccess: (data: any) => {
+        console.log('Delete success data:', data)
+        console.log('Delete API response:', data)
+        const message = data?.message || 'User deleted successfully!'
+        toast.success(message, {
+          action: {
+            label: 'Undo',
+            onClick: () => {
+              restoreUserMutation.mutate(userToDelete, {
+                onSuccess: (restoreData: any) => {
+                  console.log('Restore success data:', restoreData)
+                  toast.success(restoreData.message || 'User restored successfully!')
+                },
+                onError: (restoreError: any) => {
+                  console.error('Restore error:', restoreError)
+                  toast.error('Failed to restore user')
+                }
+              })
+            }
           }
-        )
+        })
       },
       onError: (error: any) => {
-        toast.error('Failed to delete user')
-        console.error('Error deleting user:', error)
+        console.error('Delete error details:', error)
+        const errorMessage = error.response?.data?.message || 'Failed to delete user'
+        toast.error(errorMessage)
       }
     })
   }
@@ -164,17 +155,16 @@ export default function UsersPage() {
       dateOfBirth: formData.dateOfBirth
     }
     updateUserMutation.mutate(fullUpdatedUser, {
-      onSuccess: () => {
+      onSuccess: (data: any) => {
+        console.log('Update success data:', data)
         setFormData({ firstName: '', lastName: '', age: '', gender: '', email: '', phone: '', dateOfBirth: '' })
         setEditOpen(false)
         setEditingUser(null)
-        toast.success('User updated successfully!', {
-          duration: 3000,
-          position: 'bottom-center',
-        })
+        toast.success(data.message || 'User updated successfully!')
       },
       onError: (error: any) => {
-        toast.error('Failed to update user')
+        const errorMessage = error.response?.data?.message || 'Failed to update user'
+        toast.error(errorMessage)
         console.error('Error updating user:', error)
       }
     })
@@ -235,7 +225,7 @@ export default function UsersPage() {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg">
           <DataTable columns={columns} data={data} />
         </div>
-        <Toaster />
+
       </div>
     </div>
   )

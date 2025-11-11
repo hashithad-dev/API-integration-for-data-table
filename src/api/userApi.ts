@@ -18,7 +18,7 @@ export const userApi = {
     }))
   },
 
-  createUser: async (user: Omit<User, 'id'>): Promise<User> => {
+  createUser: async (user: Omit<User, 'id'>): Promise<any> => {
     const response = await fetch(API_BASE, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -40,11 +40,12 @@ export const userApi = {
       gender: user.gender,
       email: created.email,
       phone: created.phone,
-      dateOfBirth: created.dateofbirth
+      dateOfBirth: created.dateofbirth,
+      message: created.message
     }
   },
 
-  updateUser: async (user: User): Promise<User> => {
+  updateUser: async (user: User): Promise<any> => {
     const response = await fetch(`${API_BASE}/${user.id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -66,12 +67,14 @@ export const userApi = {
       gender: user.gender,
       email: updated.email,
       phone: updated.phone,
-      dateOfBirth: updated.dateofbirth
+      dateOfBirth: updated.dateofbirth,
+      message: updated.message
     }
   },
 
-  deleteUser: async (id: string): Promise<string> => {
-    await fetch(`${API_BASE}/${id}`, { method: 'DELETE' })
-    return id
+  deleteUser: async (id: string): Promise<any> => {
+    const response = await fetch(`${API_BASE}/${id}`, { method: 'DELETE' })
+    const result = await response.json()
+    return result
   }
 }

@@ -23,8 +23,7 @@ export const useHybridUsers = () => {
   // Create user mutation
   const createUserMutation = useMutation({
     mutationFn: userApi.createUser,
-    onSuccess: (newUser) => {
-      addUser(newUser)
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] })
     }
   })
@@ -32,8 +31,7 @@ export const useHybridUsers = () => {
   // Update user mutation
   const updateUserMutation = useMutation({
     mutationFn: userApi.updateUser,
-    onSuccess: (updatedUser) => {
-      updateUser(updatedUser)
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] })
     }
   })
@@ -41,8 +39,7 @@ export const useHybridUsers = () => {
   // Delete user mutation
   const deleteUserMutation = useMutation({
     mutationFn: userApi.deleteUser,
-    onSuccess: (_, deletedId) => {
-      deleteUser(deletedId)
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] })
     }
   })
@@ -50,14 +47,13 @@ export const useHybridUsers = () => {
   // Restore user mutation
   const restoreUserMutation = useMutation({
     mutationFn: userApi.createUser,
-    onSuccess: (restoredUser) => {
-      restoreUser(restoredUser)
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] })
     }
   })
 
   return {
-    data: users,
+    data: apiUsers,
     isLoading,
     error,
     createUserMutation,

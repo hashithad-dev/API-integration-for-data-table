@@ -1,9 +1,13 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from 'sonner';
 import DemoPage from "./pages/api-user/page";
 import AddUser from "./pages/user/userstable";
 import Layout from "./components/Layout/Layout";
 import AdminLayout from "./components/Layout/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
+import NotFound from "./pages/NotFound";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 import { ROUTES } from './constants/routes';
 
 function App() {
@@ -16,12 +20,17 @@ function App() {
           <Route path="users" element={<AddUser />} />
         </Route> */}
         <Route path="/" element={<Navigate to="/admin" replace />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="api-users" element={<DemoPage />} />
           <Route path="local-users" element={<AddUser />} />
+          <Route path="*" element={<NotFound />} />
         </Route>
+        
       </Routes>
+      <Toaster position="bottom-center" richColors />
     </BrowserRouter>
   );
 }

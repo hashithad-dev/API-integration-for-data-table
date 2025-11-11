@@ -22,7 +22,7 @@ const menuItems = [
   },
   {
     path: '/admin/api-users',
-    label: 'API Users',
+    label: 'API Products',
     icon: FaDatabase,
     gradient: 'from-emerald-500 to-teal-600',
     bgGradient: 'from-emerald-50 to-teal-50',
