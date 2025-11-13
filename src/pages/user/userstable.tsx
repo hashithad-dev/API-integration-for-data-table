@@ -179,10 +179,10 @@ export default function UsersPage() {
   if (error) return <ErrorState />
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto py-10">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Manual Users</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Manual Users</h1>
           <UserDialog
             open={open}
             onOpenChange={(isOpen) => {
@@ -222,7 +222,7 @@ export default function UsersPage() {
             />
           </UserDialog>
         </div>
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+        <div className="bg-white rounded-lg shadow-lg">
           <DataTable columns={columns} data={data} />
         </div>
 

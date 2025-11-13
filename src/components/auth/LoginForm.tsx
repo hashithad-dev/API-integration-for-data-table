@@ -1,15 +1,41 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
 import { useNavigate } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { useAuthStore } from '@/store/authStore'
+import { toast } from 'sonner'
+
+const loginSchema = z.object({
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(1, 'Password is required')
+})
+
+type LoginForm = z.infer<typeof loginSchema>
 
 export default function LoginForm() {
   const navigate = useNavigate()
+  const { login, isLoading } = useAuthStore()
+  
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>({
+    resolver: zodResolver(loginSchema)
+  })
+
+  const onSubmit = async (data: LoginForm) => {
+    try {
+      await login(data.email, data.password)
+      toast.success('Login successful!')
+      navigate('/admin')
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Login failed')
+    }
+  }
   
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <Card className="w-full max-w-[400px] bg-white border border-gray-200 shadow-lg">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl text-center">Welcome back</CardTitle>
           <CardDescription className="text-center">
@@ -17,42 +43,35 @@ export default function LoginForm() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <label htmlFor="email" className="text-sm font-medium">Email</label>
-            <Input 
-              id="email" 
-              type="email" 
-              placeholder="name@example.com" 
-              required 
-            />
-          </div>
-          <div className="space-y-2">
-            <label htmlFor="password" className="text-sm font-medium">Password</label>
-            <Input 
-              id="password" 
-              type="password" 
-              placeholder="Enter your password" 
-              required 
-            />
-          </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox id="remember" />
-            <label htmlFor="remember" className="text-sm font-normal">
-              Remember me
-            </label>
-          </div>
-          <Button className="w-full" size="lg">
-            Sign In
-          </Button>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="email" className="text-sm font-medium">Email</label>
+              <Input 
+                id="email" 
+                type="email" 
+                placeholder="name@example.com" 
+                {...register('email')}
+              />
+              {errors.email && <p className="text-red-500 text-xs">{errors.email.message}</p>}
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="password" className="text-sm font-medium">Password</label>
+              <Input 
+                id="password" 
+                type="password" 
+                placeholder="Enter your password" 
+                {...register('password')}
+              />
+              {errors.password && <p className="text-red-500 text-xs">{errors.password.message}</p>}
+            </div>
+            <Button type="submit" className="w-full theme-bg hover:theme-bg-dark text-white" size="lg" disabled={isLoading}>
+              {isLoading ? 'Signing In...' : 'Sign In'}
+            </Button>
+          </form>
 
           <div className="text-center text-sm">
-            <Button variant="link" className="p-0 h-auto">
-              Forgot your password?
-            </Button>
-          </div>
-          <div className="text-center text-sm">
             <span>Don't have an account? </span>
-            <Button variant="link" className="p-0 h-auto" onClick={() => navigate('/register')}>
+            <Button variant="link" className="p-0 h-auto theme-text hover:theme-bg-light" onClick={() => navigate('/register')}>
               Sign up
             </Button>
           </div>

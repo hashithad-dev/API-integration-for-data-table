@@ -8,6 +8,8 @@ import Dashboard from "./pages/admin/Dashboard";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
+import PublicRoute from "./components/auth/PublicRoute";
 import { ROUTES } from './constants/routes';
 
 function App() {
@@ -20,9 +22,9 @@ function App() {
           <Route path="users" element={<AddUser />} />
         </Route> */}
         <Route path="/" element={<Navigate to="/admin" replace />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/admin" element={<AdminLayout />}>
+        <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+        <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
+        <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
           <Route index element={<Dashboard />} />
           <Route path="api-users" element={<DemoPage />} />
           <Route path="local-users" element={<AddUser />} />

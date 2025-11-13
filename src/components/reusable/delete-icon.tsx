@@ -32,7 +32,7 @@ export const DeleteIcon: React.FC<DeleteIconProps> = ({ onDelete, className = ''
       </Button>
       
       <Dialog open={showConfirm} onOpenChange={setShowConfirm}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] bg-white border border-gray-200 shadow-lg">
           <DialogHeader className="space-y-3">
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
               <FaTrash className="h-6 w-6 text-red-600" />

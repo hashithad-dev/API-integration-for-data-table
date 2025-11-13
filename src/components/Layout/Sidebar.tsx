@@ -7,9 +7,13 @@ import {
   FaStar,
   FaBolt,
   FaBars,
-  FaTimes
+  FaTimes,
+  FaUser,
+  FaCog,
+  FaSignOutAlt
 } from 'react-icons/fa'
 import { MdDashboard } from 'react-icons/md'
+import { useAuthStore } from '@/store/authStore'
 
 const menuItems = [
   {
@@ -41,9 +45,10 @@ const menuItems = [
 export default function Sidebar() {
   const location = useLocation()
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const { user, logout } = useAuthStore()
 
   return (
-    <div className={`${isCollapsed ? 'w-20' : 'w-64'} bg-white dark:bg-gray-800 shadow-2xl border-r border-gray-200 dark:border-gray-700 relative overflow-hidden transition-all duration-300`}>
+    <div className={`${isCollapsed ? 'w-20' : 'w-64'} bg-white shadow-2xl border-r border-gray-200 relative overflow-hidden transition-all duration-300`}>
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-indigo-400/10 to-purple-400/10 rounded-full blur-2xl"></div>
@@ -55,24 +60,18 @@ export default function Sidebar() {
         <div className="flex items-center justify-between mb-2">
           {!isCollapsed && (
             <div>
-              <h2 className="text-2xl font-black text-black dark:text-white">
+              <h2 className="text-2xl font-black text-black">
                 Admin Panel
               </h2>
             </div>
           )}
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-2 rounded-lg bg-white/50 hover:bg-white/80 transition-all duration-200 shadow-md hover:shadow-lg"
+            className="p-2 rounded-lg bg-white hover:bg-gray-100 transition-all duration-200 shadow-md hover:shadow-lg"
           >
-            {isCollapsed ? <FaBars className="w-4 h-4 text-gray-600 dark:text-gray-300" /> : <FaTimes className="w-4 h-4 text-gray-600 dark:text-gray-300" />}
+            {isCollapsed ? <FaBars className="w-4 h-4 text-gray-600" /> : <FaTimes className="w-4 h-4 text-gray-600" />}
           </button>
         </div>
-        {!isCollapsed && (
-          <div className="flex items-center space-x-2 mt-3">
-            
-           
-          </div>
-        )}
       </div>
       
       {/* Navigation */}
@@ -87,8 +86,8 @@ export default function Sidebar() {
               to={item.path}
               className={`group relative flex items-center ${isCollapsed ? 'justify-center px-3 py-3' : 'px-6 py-4'} rounded-2xl font-semibold transition-all duration-300 ${
                 isActive
-                  ? `bg-gradient-to-r ${item.bgGradient} border-2 border-white shadow-xl backdrop-blur-sm`
-                  : `hover:bg-gradient-to-r hover:${item.hoverGradient} hover:shadow-lg text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white`
+                  ? `theme-bg-light border-2 border-white shadow-xl backdrop-blur-sm`
+                  : `hover:theme-bg-light hover:shadow-lg text-gray-700 hover:text-gray-900`
               }`}
               style={{
                 animationDelay: `${index * 100}ms`
@@ -97,17 +96,17 @@ export default function Sidebar() {
             >
               {/* Animated Background for Active Item */}
               {isActive && (
-                <div className={`absolute inset-0 bg-gradient-to-r ${item.gradient} opacity-5 rounded-2xl animate-pulse`}></div>
+                <div className={`absolute inset-0 bg-gradient-to-r ${item.gradient} opacity-5 rounded-2xl`}></div>
               )}
               
               {/* Icon with Animation */}
               <div className={`relative p-2 rounded-xl ${isCollapsed ? '' : 'mr-4'} transition-all duration-300 ${
                 isActive 
-                  ? 'bg-red-500 shadow-lg' 
+                  ? 'theme-bg shadow-lg' 
                   : 'bg-gray-100 hover:bg-white hover:shadow-md'
               }`}>
                 <Icon className={`w-5 h-5 transition-all duration-300 ${
-                  isActive ? 'text-white' : 'text-gray-600 dark:text-gray-300 group-hover:text-gray-800 dark:group-hover:text-white'
+                  isActive ? 'text-white' : 'text-gray-600 group-hover:text-gray-800'
                 }`} />
               </div>
               
@@ -115,8 +114,8 @@ export default function Sidebar() {
               {!isCollapsed && (
                 <span className={`relative text-sm font-bold transition-all duration-300 ${
                   isActive 
-                    ? 'text-gray-800 dark:text-white' 
-                    : 'text-gray-600 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white'
+                    ? 'text-gray-800' 
+                    : 'text-gray-600 group-hover:text-gray-900'
                 }`}>
                   {item.label}
                 </span>
@@ -126,7 +125,7 @@ export default function Sidebar() {
               {isActive && !isCollapsed && (
                 <div className="ml-auto flex items-center space-x-2">
                   <div className="w-2 h-2 bg-gradient-to-r from-emerald-400 to-green-500 rounded-full"></div>
-                  <FaChevronRight className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+                  <FaChevronRight className="w-4 h-4 text-gray-600" />
                 </div>
               )}
               
@@ -140,7 +139,7 @@ export default function Sidebar() {
               {/* Hover Effect - Only show when not collapsed */}
               {!isActive && !isCollapsed && (
                 <div className="ml-auto opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
-                  <FaBolt className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                  <FaBolt className="w-4 h-4 text-gray-400" />
                 </div>
               )}
               
@@ -154,15 +153,36 @@ export default function Sidebar() {
           )
         })}
       </nav>
-      
-      {/* Bottom Decoration */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-        <div className={`flex ${isCollapsed ? 'flex-col space-y-2' : 'space-x-2'}`}>
-          <div className="w-2 h-2 bg-gradient-to-r from-indigo-400 to-purple-500 rounded-full"></div>
-          <div className="w-2 h-2 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full"></div>
-          <div className="w-2 h-2 bg-gradient-to-r from-violet-400 to-fuchsia-500 rounded-full"></div>
+
+      {/* Bottom User Info */}
+      {!isCollapsed && user && (
+        <div className="absolute bottom-8 left-4 right-4">
+          <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-xl">
+            <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
+              <FaUser className="w-3 h-3 text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold text-gray-900 truncate">
+                {user.name}
+              </p>
+              <p className="text-xs text-gray-500 truncate">
+                {user.email}
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
+      
+      {/* Bottom Decoration - Collapsed State */}
+      {isCollapsed && (
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+          <div className="flex flex-col space-y-2">
+            <div className="w-2 h-2 bg-gradient-to-r from-indigo-400 to-purple-500 rounded-full"></div>
+            <div className="w-2 h-2 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full"></div>
+            <div className="w-2 h-2 bg-gradient-to-r from-violet-400 to-fuchsia-500 rounded-full"></div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

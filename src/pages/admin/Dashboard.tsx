@@ -4,7 +4,7 @@ import { useApiUsers } from '../../hooks/useApiUsers'
 import { FaUsers, FaDatabase, FaChartLine, FaChartBar, FaChartPie, FaBolt } from 'react-icons/fa'
 import { MdTrendingUp } from 'react-icons/md'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '../../components/ui/chart'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, PieChart, Pie, Cell, ResponsiveContainer, AreaChart, Area } from 'recharts'
 
 export default function Dashboard() {
   const { data: localUsers = [], isLoading } = useHybridUsers()
@@ -54,22 +54,22 @@ export default function Dashboard() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative overflow-hidden">
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-3xl"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-full blur-3xl"></div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-indigo-400/10 to-purple-400/10 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="relative bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50 p-8 mb-8 shadow-xl">
+      <div className="relative bg-white border-b border-gray-200 p-8 mb-8 shadow-xl">
         <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/5 via-purple-500/5 to-pink-500/5"></div>
         <div className="relative flex items-center justify-center">
           <div className="flex items-center space-x-4">
             <div>
-              <h1 className="text-5xl font-black text-black dark:text-white">
+              <h1 className="text-5xl font-black text-black">
                 Dashboard Overview
               </h1>
-              <p className="text-gray-600 dark:text-gray-300 mt-2 text-lg font-medium">Welcome back! </p>
+              <p className="text-gray-600 mt-2 text-lg font-medium">Welcome back! </p>
             </div>
           </div>
         </div>
@@ -80,7 +80,7 @@ export default function Dashboard() {
           {stats.map((stat, index) => {
             const Icon = stat.icon
             return (
-              <div key={index} className="group relative bg-white dark:bg-gray-800 backdrop-blur-xl rounded-3xl shadow-2xl transition-all duration-300 border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <div key={index} className="group relative bg-white rounded-3xl shadow-2xl transition-all duration-300 border border-gray-200 overflow-hidden">
                 <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-0 transition-all duration-500`} />
                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
                 
@@ -90,8 +90,8 @@ export default function Dashboard() {
                       <Icon className="w-5 h-5 text-white" />
                     </div>
                     <div className="space-y-1">
-                      <p className="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">{stat.title}</p>
-                      <p className="text-2xl font-black text-gray-900 dark:text-white transition-all duration-300">{stat.value.toLocaleString()}</p>
+                      <p className="text-xs font-bold text-gray-700 uppercase tracking-wider">{stat.title}</p>
+                      <p className="text-2xl font-black text-gray-900 transition-all duration-300">{stat.value.toLocaleString()}</p>
                     </div>
                   </div>
                 </div>
@@ -100,8 +100,8 @@ export default function Dashboard() {
           })}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-1 bg-white dark:bg-gray-800 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+          <div className="lg:col-span-3 bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden">
             <div className="px-2 py-4 bg-gradient-to-r from-indigo-50/50 to-purple-50/50 border-b border-indigo-200/30">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
@@ -109,8 +109,8 @@ export default function Dashboard() {
                     <FaUsers className="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-black dark:text-white">Recent Local Users</h3>
-                    <p className="text-xs text-gray-600 dark:text-gray-300 font-medium">Latest registered members</p>
+                    <h3 className="text-lg font-bold text-black">Recent Local Users</h3>
+                    <p className="text-xs text-gray-600 font-medium">Latest registered members</p>
                   </div>
                 </div>
                 <div 
@@ -133,7 +133,7 @@ export default function Dashboard() {
                   <div className="space-y-3">
                     {localUsers && localUsers.length > 0 ? (
                       localUsers.slice(0, showAllUsers ? localUsers.length : 4).map((user) => (
-                        <div key={user.id} className="flex items-center space-x-3 px-2 py-3 bg-white dark:bg-gray-700 rounded-xl transition-all duration-300 border border-gray-200 dark:border-gray-600 shadow-md">
+                        <div key={user.id} className="flex items-center space-x-3 px-2 py-3 bg-white rounded-xl transition-all duration-300 border border-gray-200 shadow-md">
                           <div className="relative">
                             <div className="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center shadow-lg">
                               <span className="text-white font-black text-sm">
@@ -145,13 +145,13 @@ export default function Dashboard() {
                             </div>
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-bold text-gray-900 dark:text-white truncate">
+                            <p className="text-sm font-bold text-gray-900 truncate">
                               {user.firstName || 'Unknown'} {user.lastName || 'User'}
                             </p>
-                            <p className="text-xs text-gray-600 dark:text-gray-300 truncate font-medium">{user.email || 'No email'}</p>
+                            <p className="text-xs text-gray-600 truncate font-medium">{user.email || 'No email'}</p>
                           </div>
-                          <div className="text-right bg-white/60 dark:bg-gray-600/60 rounded-lg p-2 border border-gray-200/50 dark:border-gray-500/50">
-                            <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">#{user.id}</p>
+                          <div className="text-right bg-gray-50 rounded-lg p-2 border border-gray-200">
+                            <p className="text-xs text-gray-500 font-medium">#{user.id}</p>
                           </div>
                         </div>
                       ))
@@ -169,15 +169,15 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="lg:col-span-2 bg-white dark:bg-gray-800 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="lg:col-span-2 bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden">
             <div className="px-4 py-8 bg-gradient-to-r from-emerald-50/50 to-teal-50/50 border-b border-emerald-200/30">
               <div className="flex items-center space-x-4 mb-3">
                 <div className="p-3 bg-red-500 rounded-2xl shadow-lg">
                   <FaDatabase className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-black dark:text-white">Top Products</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">{apiUsers.length} products available</p>
+                  <h3 className="text-xl font-bold text-black">Top Products</h3>
+                  <p className="text-sm text-gray-600 font-medium">{apiUsers.length} products available</p>
                 </div>
               </div>
             </div>
@@ -188,47 +188,97 @@ export default function Dashboard() {
                   config={{
                     price: {
                       label: "Price",
-                      color: "hsl(var(--chart-1))",
+                      color: "#ef4444",
+                    },
+                    stock: {
+                      label: "Stock",
+                      color: "#10b981",
                     },
                   }}
                   className="h-[300px]"
                 >
-                  <BarChart
-                    data={apiUsers.slice(0, 8).map(product => ({
+                  <AreaChart
+                    data={apiUsers.slice(0, 8).map((product, index) => ({
                       name: product.title.length > 15 ? product.title.substring(0, 15) + '...' : product.title,
                       price: product.price,
-                      fullName: product.title
+                      stock: product.stock,
+                      fullName: product.title,
+                      index: index + 1
                     }))}
                     margin={{
                       top: 20,
                       right: 30,
                       left: 20,
-                      bottom: 5,
+                      bottom: 60,
                     }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                    <defs>
+                      <linearGradient id="fillPrice" x1="0" y1="0" x2="0" y2="1">
+                        <stop
+                          offset="5%"
+                          stopColor="#ef4444"
+                          stopOpacity={0.8}
+                        />
+                        <stop
+                          offset="95%"
+                          stopColor="#ef4444"
+                          stopOpacity={0.1}
+                        />
+                      </linearGradient>
+                      <linearGradient id="fillStock" x1="0" y1="0" x2="0" y2="1">
+                        <stop
+                          offset="5%"
+                          stopColor="#10b981"
+                          stopOpacity={0.8}
+                        />
+                        <stop
+                          offset="95%"
+                          stopColor="#10b981"
+                          stopOpacity={0.1}
+                        />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid vertical={false} className="stroke-muted" />
                     <XAxis 
                       dataKey="name" 
                       className="text-xs fill-muted-foreground"
+                      tickLine={false}
+                      axisLine={false}
+                      tickMargin={8}
                       angle={-45}
                       textAnchor="end"
                       height={80}
                     />
                     <YAxis className="text-xs fill-muted-foreground" />
                     <ChartTooltip
-                      content={<ChartTooltipContent />}
-                      formatter={(value, name, props) => [
-                        `$${value}`,
-                        props.payload?.fullName || name
-                      ]}
+                      cursor={false}
+                      content={
+                        <ChartTooltipContent
+                          formatter={(value, name, props) => {
+                            if (name === 'price') {
+                              return [`$${value}`, props.payload?.fullName || 'Price']
+                            }
+                            return [value, name === 'stock' ? 'Stock' : name]
+                          }}
+                          indicator="dot"
+                        />
+                      }
                     />
-                    <Bar 
-                      dataKey="price" 
-                      fill="#ef4444" 
-                      radius={[4, 4, 0, 0]}
-                      className="fill-red-500"
+                    <Area
+                      dataKey="stock"
+                      type="natural"
+                      fill="url(#fillStock)"
+                      stroke="#10b981"
+                      stackId="a"
                     />
-                  </BarChart>
+                    <Area
+                      dataKey="price"
+                      type="natural"
+                      fill="url(#fillPrice)"
+                      stroke="#ef4444"
+                      stackId="a"
+                    />
+                  </AreaChart>
                 </ChartContainer>
               ) : (
                 <div className="text-center py-16">
@@ -242,15 +292,15 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-1 bg-white dark:bg-gray-800 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 px-2 py-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+          <div className="lg:col-span-1 bg-white rounded-3xl shadow-2xl border border-gray-200 px-2 py-4">
             <div className="flex items-center space-x-2 mb-4">
               <div className="p-2 bg-red-500 rounded-xl shadow-lg">
                 <FaChartPie className="w-4 h-4 text-white" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-black dark:text-white">Data Distribution</h3>
-                <p className="text-xs text-gray-600 dark:text-gray-300 font-medium">Users vs Products</p>
+                <h3 className="text-lg font-bold text-black">Data Distribution</h3>
+                <p className="text-xs text-gray-600 font-medium">Users vs Products</p>
               </div>
             </div>
             
@@ -292,7 +342,7 @@ export default function Dashboard() {
                     content={({ active, payload }) => {
                       if (active && payload && payload.length) {
                         return (
-                          <div className="bg-white dark:bg-gray-800 p-3 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg">
+                          <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
                             <p className="font-semibold">{payload[0].name}</p>
                             <p className="text-sm">{payload[0].value} items</p>
                           </div>
@@ -306,7 +356,7 @@ export default function Dashboard() {
             </ChartContainer>
           </div>
 
-          <div className="lg:col-span-2 bg-white dark:bg-gray-800 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 p-8">
+          <div className="lg:col-span-2 bg-white rounded-3xl shadow-2xl border border-gray-200 p-8">
             <div className="grid grid-cols-2 gap-8">
             <div className="text-center group">
               <div className="bg-red-500 w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg transition-all duration-300">
