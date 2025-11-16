@@ -44,7 +44,7 @@ export const ViewIcon: React.FC<ViewIconProps> = ({ user, className = '' }) => {
       </Button>
       
       <Dialog open={viewOpen} onOpenChange={setViewOpen}>
-        <DialogContent className="sm:max-w-sm bg-white border border-gray-200 shadow-lg">
+        <DialogContent className="sm:max-w-md bg-white border border-gray-200 shadow-lg">
           <DialogHeader className="border-b pb-2">
             <DialogTitle className="text-lg font-semibold text-gray-800 flex items-center gap-2">
               <FaEye className="text-blue-600 h-4 w-4" />
