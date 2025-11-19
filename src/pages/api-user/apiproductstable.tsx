@@ -40,6 +40,7 @@ export const paymentColumns: ColumnDef<Product>[] = [
         title="ID"
       />
     ),
+    cell: ({ row }) => <div>{row.getValue("ID")}</div>,
   },
 
   // 🔹 title
@@ -51,6 +52,7 @@ export const paymentColumns: ColumnDef<Product>[] = [
         title="Title"
       />
     ),
+    cell: ({ row }) => <div>{row.getValue("Title")}</div>,
   },
 
   // 🔹 category
@@ -62,6 +64,7 @@ export const paymentColumns: ColumnDef<Product>[] = [
         title="Category"
       />
     ),
+    cell: ({ row }) => <div>{row.getValue("Category")}</div>,
   },
 
   // 🔹price
@@ -73,6 +76,7 @@ export const paymentColumns: ColumnDef<Product>[] = [
         title="Price"
       />
     ),
+    cell: ({ row }) => <div>${row.getValue("Price")}</div>,
   },
 
   // 🔹discountPercentage
@@ -81,9 +85,10 @@ export const paymentColumns: ColumnDef<Product>[] = [
     header: ({ column }) => (
        <DataTableColumnHeader
         column={column}
-        title="DiscountPercentage"
+        title="Discount %"
       />
     ),
+    cell: ({ row }) => <div>{row.getValue("DiscountPercentage")}%</div>,
   },
 
   // 🔹 stock
@@ -108,6 +113,7 @@ export const paymentColumns: ColumnDef<Product>[] = [
     header: "Actions",
     cell: ({ row }) => {
       const user = row.original
+      console.log('Product data:', user)
       return <ViewIcon user={user} />
     },
   },

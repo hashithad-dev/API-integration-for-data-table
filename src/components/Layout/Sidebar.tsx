@@ -165,13 +165,40 @@ export default function Sidebar() {
       {!isCollapsed && user && (
         <div className="absolute bottom-8 left-4 right-4">
           <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-xl">
-            <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
-              <FaUser className="w-3 h-3 text-white" />
+            <div className="relative">
+              {user.photo ? (
+                <img src={user.photo} alt={user.name} className="w-8 h-8 rounded-full object-cover" />
+              ) : (
+                <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
+                  <FaUser className="w-3 h-3 text-white" />
+                </div>
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                onChange={(e) => {
+                  const file = e.target.files?.[0]
+                  if (file) {
+                    const reader = new FileReader()
+                    reader.onload = (e) => {
+                      const photo = e.target?.result as string
+                      useAuthStore.getState().updateProfile(user.name, user.email, photo)
+                    }
+                    reader.readAsDataURL(file)
+                  }
+                }}
+              />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-gray-900 truncate">
-                {user.name}
-              </p>
+              <input
+                type="text"
+                value={user.name}
+                onChange={(e) => {
+                  useAuthStore.getState().updateProfile(e.target.value, user.email, user.photo)
+                }}
+                className="text-xs font-semibold text-gray-900 bg-transparent border-none outline-none w-full"
+              />
               <p className="text-xs text-gray-500 truncate">
                 {user.email}
               </p>

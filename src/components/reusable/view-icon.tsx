@@ -31,7 +31,7 @@ interface ViewIconProps {
 
 export const ViewIcon: React.FC<ViewIconProps> = ({ user, className = '' }) => {
   const [viewOpen, setViewOpen] = useState(false)
-  const isProduct = user.title !== undefined
+  const isProduct = (user as any).Title !== undefined
 
   return (
     <>
@@ -57,32 +57,32 @@ export const ViewIcon: React.FC<ViewIconProps> = ({ user, className = '' }) => {
                 <div className="flex items-center justify-between p-2 bg-gradient-to-r from-blue-50 to-indigo-50 rounded border border-blue-100">
                   <div>
                     <p className="text-xs font-medium text-blue-700">Product Name</p>
-                    <p className="text-sm font-bold text-gray-900">{user.title}</p>
+                    <p className="text-sm font-bold text-gray-900">{(user as any).Title}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs text-gray-500">ID: {user.id}</p>
+                    <p className="text-xs text-gray-500">ID: {(user as any).ID}</p>
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-2">
                   <div className="p-2 bg-green-50 rounded border border-green-100">
                     <p className="text-xs font-medium text-green-700">Category</p>
-                    <p className="text-xs font-semibold text-gray-900">{user.category}</p>
+                    <p className="text-xs font-semibold text-gray-900">{(user as any).Category}</p>
                   </div>
                   <div className="p-2 bg-purple-50 rounded border border-purple-100">
                     <p className="text-xs font-medium text-purple-700">Stock</p>
-                    <p className="text-xs font-semibold text-gray-900">{user.stock}</p>
+                    <p className="text-xs font-semibold text-gray-900">{(user as any).Stock}</p>
                   </div>
                 </div>
                 
                 <div className="p-2 bg-gray-50 rounded border border-gray-200">
                   <p className="text-xs font-medium text-gray-600">Price</p>
-                  <p className="text-xs font-semibold text-gray-900">${user.price}</p>
+                  <p className="text-xs font-semibold text-gray-900">${(user as any).Price}</p>
                 </div>
                 
                 <div className="p-2 bg-orange-50 rounded border border-orange-100">
                   <p className="text-xs font-medium text-orange-700">Discount</p>
-                  <p className="text-xs font-semibold text-gray-900">{user.discountPercentage}%</p>
+                  <p className="text-xs font-semibold text-gray-900">{(user as any).DiscountPercentage}%</p>
                 </div>
               </div>
             ) : (

@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { useTheme } from '../../contexts/ThemeContext'
 import { useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuthStore } from '@/store/authStore'
 import { toast } from 'sonner'
 
@@ -13,19 +13,64 @@ export default function Header() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
+  const [isChangingPassword, setIsChangingPassword] = useState(false)
   const [editName, setEditName] = useState('')
   const [editEmail, setEditEmail] = useState('')
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [profileImage, setProfileImage] = useState<string | null>(null)
   const { user, logout } = useAuthStore()
+  
+  // Initialize profile image from user data
+  useEffect(() => {
+    if (user?.photo) {
+      setProfileImage(user.photo)
+    }
+  }, [user?.photo])
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
+    console.log('handleImageUpload called with file:', file)
     if (file) {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        setProfileImage(e.target?.result as string)
+      console.log('File selected:', file.name, file.size, file.type)
+      
+      // Create canvas to compress image
+      const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')
+      const img = new Image()
+      
+      img.onload = () => {
+        // Set canvas size (max 300x300)
+        const maxSize = 300
+        let { width, height } = img
+        
+        if (width > height) {
+          if (width > maxSize) {
+            height = (height * maxSize) / width
+            width = maxSize
+          }
+        } else {
+          if (height > maxSize) {
+            width = (width * maxSize) / height
+            height = maxSize
+          }
+        }
+        
+        canvas.width = width
+        canvas.height = height
+        
+        // Draw and compress
+        ctx?.drawImage(img, 0, 0, width, height)
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7)
+        
+        console.log('Image compressed from', file.size, 'to', compressedDataUrl.length)
+        setProfileImage(compressedDataUrl)
       }
-      reader.readAsDataURL(file)
+      
+      img.src = URL.createObjectURL(file)
+    } else {
+      console.log('No file selected')
     }
   }
 
@@ -51,7 +96,11 @@ export default function Header() {
             className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100"
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
           >
-            <FaUser className="w-5 h-5 text-gray-600" />
+            {user?.photo ? (
+              <img src={user.photo} alt="Profile" className="w-5 h-5 rounded-full object-cover" />
+            ) : (
+              <FaUser className="w-5 h-5 text-gray-600" />
+            )}
             <span className="text-sm text-gray-700">{user?.name}</span>
           </Button>
           
@@ -96,8 +145,8 @@ export default function Header() {
             <div className="flex justify-center">
               <div className="relative">
                 <div className="w-24 h-24 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
-                  {profileImage ? (
-                    <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
+                  {(profileImage || user?.photo) ? (
+                    <img src={profileImage || user?.photo} alt="Profile" className="w-full h-full object-cover" />
                   ) : (
                     <FaUser className="w-8 h-8 text-gray-400" />
                   )}
@@ -108,7 +157,10 @@ export default function Header() {
                     <input 
                       type="file" 
                       accept="image/*" 
-                      onChange={handleImageUpload}
+                      onChange={(e) => {
+                        console.log('File input changed:', e.target.files?.[0])
+                        handleImageUpload(e)
+                      }}
                       className="sr-only"
                     />
                   </label>
@@ -160,9 +212,22 @@ export default function Header() {
                 <>
                   <Button 
                     className="flex-1 bg-green-600 hover:bg-green-700 text-white"
-                    onClick={() => {
-                      toast.success('Profile updated successfully!')
-                      setIsEditing(false)
+                    onClick={async () => {
+                      try {
+                        console.log('Save button clicked with:', {
+                          editName,
+                          editEmail,
+                          profileImage: profileImage ? `${profileImage.substring(0, 50)}...` : 'no image',
+                          profileImageLength: profileImage?.length
+                        })
+                        const { updateProfile } = useAuthStore.getState()
+                        await updateProfile(editName, editEmail, profileImage || undefined)
+                        toast.success('Profile updated successfully!')
+                        setIsEditing(false)
+                      } catch (error) {
+                        console.error('Profile update error:', error)
+                        toast.error('Profile update failed!')
+                      }
                     }}
                   >
                     Save Changes
@@ -174,6 +239,7 @@ export default function Header() {
                       setIsEditing(false)
                       setEditName(user?.name || '')
                       setEditEmail(user?.email || '')
+                      setProfileImage(user?.photo || null)
                     }}
                   >
                     Cancel
@@ -197,7 +263,10 @@ export default function Header() {
                     variant="outline" 
                     className="flex-1"
                     onClick={() => {
-                      toast.info('Change Password feature coming soon!')
+                      setIsChangingPassword(true)
+                      setCurrentPassword('')
+                      setNewPassword('')
+                      setConfirmPassword('')
                     }}
                   >
                     <FaLock className="w-4 h-4 mr-2" />
@@ -206,6 +275,81 @@ export default function Header() {
                 </>
               )}
             </div>
+            
+            {isChangingPassword && (
+              <div className="space-y-4 pt-4 border-t">
+                <h3 className="font-semibold text-gray-900">Change Password</h3>
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Current Password</label>
+                    <Input 
+                      type="password"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">New Password</label>
+                    <Input 
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Confirm New Password</label>
+                    <Input 
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="mt-1"
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <Button 
+                    className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                    onClick={async () => {
+                      if (newPassword !== confirmPassword) {
+                        toast.error('Passwords do not match!')
+                        return
+                      }
+                      if (newPassword.length < 6) {
+                        toast.error('Password must be at least 6 characters!')
+                        return
+                      }
+                      try {
+                        const { changePassword } = useAuthStore.getState()
+                        await changePassword(currentPassword, newPassword)
+                        toast.success('Password changed successfully!')
+                        setIsChangingPassword(false)
+                        setCurrentPassword('')
+                        setNewPassword('')
+                        setConfirmPassword('')
+                      } catch (error: any) {
+                        toast.error(error.message || 'Failed to change password!')
+                      }
+                    }}
+                  >
+                    Update Password
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="flex-1"
+                    onClick={() => {
+                      setIsChangingPassword(false)
+                      setCurrentPassword('')
+                      setNewPassword('')
+                      setConfirmPassword('')
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </DialogContent>
       </Dialog>
