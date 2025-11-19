@@ -4,10 +4,10 @@ import { ColumnDef } from "@tanstack/react-table"
 import { Checkbox } from "@/components/ui/checkbox"
 import { DataTableColumnHeader } from "../../components/datatable/data-table-column-header"
 import { ViewIcon } from "../../components/reusable/view-icon"
-import { PaymentUser } from "../../api/users"
+import { Product } from "../../api/productApi"
 
-// 🔹 Table column definitions for PaymentUser
-export const paymentColumns: ColumnDef<PaymentUser>[] = [
+// 🔹 Table column definitions for Product
+export const paymentColumns: ColumnDef<Product>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -33,7 +33,7 @@ export const paymentColumns: ColumnDef<PaymentUser>[] = [
 
   // 🔹 ID
   {
-    accessorKey: "id",
+    accessorKey: "ID",
     header: ({ column }) => (
        <DataTableColumnHeader
         column={column}
@@ -44,7 +44,7 @@ export const paymentColumns: ColumnDef<PaymentUser>[] = [
 
   // 🔹 title
   {
-    accessorKey: "title",
+    accessorKey: "Title",
     header: ({ column }) => ( 
       <DataTableColumnHeader
         column={column}
@@ -55,7 +55,7 @@ export const paymentColumns: ColumnDef<PaymentUser>[] = [
 
   // 🔹 category
   {
-    accessorKey: "category",
+    accessorKey: "Category",
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
@@ -66,7 +66,7 @@ export const paymentColumns: ColumnDef<PaymentUser>[] = [
 
   // 🔹price
   {
-    accessorKey: "price",
+    accessorKey: "Price",
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
@@ -77,7 +77,7 @@ export const paymentColumns: ColumnDef<PaymentUser>[] = [
 
   // 🔹discountPercentage
   {
-    accessorKey: "discountPercentage",
+    accessorKey: "DiscountPercentage",
     header: ({ column }) => (
        <DataTableColumnHeader
         column={column}
@@ -88,7 +88,7 @@ export const paymentColumns: ColumnDef<PaymentUser>[] = [
 
   // 🔹 stock
   {
-    accessorKey: "stock",
+    accessorKey: "Stock",
     header: ({ column }) => (
        <DataTableColumnHeader
         column={column}
@@ -96,7 +96,7 @@ export const paymentColumns: ColumnDef<PaymentUser>[] = [
       />
     ),
     cell: ({ row }) => (
-      <div className="truncate max-w-[220px]">{row.getValue("stock")}</div>
+      <div className="truncate max-w-[220px]">{row.getValue("Stock")}</div>
     ),
   },
 

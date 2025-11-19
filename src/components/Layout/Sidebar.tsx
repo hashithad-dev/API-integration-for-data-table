@@ -60,11 +60,18 @@ export default function Sidebar() {
         <div className="flex items-center justify-between mb-2">
           {!isCollapsed && (
             <div>
-              <h2 className="text-2xl font-black text-black">
-                Admin Panel
-              </h2>
+             {user?.role === 'admin' ? (
+                <h2 className="text-2xl font-black text-black">
+                  Admin Panel
+                </h2>
+              ) : ( <h2 className="text-2xl font-black text-black">
+                  User Panel
+                </h2>)}
             </div>
           )}
+
+          
+          
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="p-2 rounded-lg bg-white hover:bg-gray-100 transition-all duration-200 shadow-md hover:shadow-lg"
@@ -76,7 +83,7 @@ export default function Sidebar() {
       
       {/* Navigation */}
       <nav className={`relative mt-8 ${isCollapsed ? 'px-2' : 'px-4'} space-y-3`}>
-        {menuItems.map((item, index) => {
+        {menuItems.filter(item => item.path !== '/admin/local-users' || user?.role === 'admin').map((item, index) => {
           const Icon = item.icon
           const isActive = location.pathname === item.path
           

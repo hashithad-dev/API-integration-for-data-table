@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -14,7 +15,8 @@ const registerSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').max(60, 'Name too long'),
   email: z.string().email('Invalid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
-  confirmPassword: z.string()
+  confirmPassword: z.string(),
+  role: z.enum(['admin', 'user'], { message: 'Please select a role' })
 }).refine(data => data.password === data.confirmPassword, {
   message: 'Passwords do not match',
   path: ['confirmPassword']
@@ -28,13 +30,13 @@ export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   
-  const { register, handleSubmit, formState: { errors } } = useForm<RegisterForm>({
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema)
   })
 
   const onSubmit = async (data: RegisterForm) => {
     try {
-      await registerUser(data.name, data.email, data.password)
+      await registerUser(data.name, data.email, data.password, data.role)
       toast.success('Registration successful! Please login.')
       navigate('/login')
     } catch (error) {
@@ -110,6 +112,19 @@ export default function RegisterForm() {
                 </button>
               </div>
               {errors.confirmPassword && <p className="text-red-500 text-xs">{errors.confirmPassword.message}</p>}
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="role" className="text-sm font-medium">Role</label>
+              <Select onValueChange={(value) => setValue('role', value as 'admin' | 'user')}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select your role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="user">User</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                </SelectContent>
+              </Select>
+              {errors.role && <p className="text-red-500 text-xs">{errors.role.message}</p>}
             </div>
             <Button type="submit" className="w-full theme-bg hover:theme-bg-dark text-white" size="lg" disabled={isLoading}>
               {isLoading ? 'Creating Account...' : 'Create Account'}

@@ -33,13 +33,26 @@ import { DataTableViewOptions } from "./DataTableViewOptions"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
-  
   data: TData[]
+  totalRows?: number
+  isServerSide?: boolean
+  onPageChange?: (page: number) => void
+  currentPage?: number
+  hasNextPage?: boolean
+  onPageSizeChange?: (pageSize: number) => void
+  pageSize?: number
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  totalRows,
+  isServerSide = false,
+  onPageChange,
+  currentPage,
+  hasNextPage,
+  onPageSizeChange,
+  pageSize = 10,
 }: DataTableProps<TData, TValue>) {
 
       const [sorting, setSorting] = React.useState<SortingState>([])
@@ -50,7 +63,6 @@ export function DataTable<TData, TValue>({
     React.useState<VisibilityState>({})
       const [rowSelection, setRowSelection] = React.useState({})
   const [globalFilter, setGlobalFilter] = React.useState("")
-
 
   const table = useReactTable({
     data,
@@ -65,6 +77,11 @@ export function DataTable<TData, TValue>({
             onRowSelectionChange: setRowSelection,
     onGlobalFilterChange: setGlobalFilter,
     globalFilterFn: 'includesString',
+    initialState: {
+      pagination: {
+        pageSize: pageSize,
+      },
+    },
     state: {
       sorting,
             columnFilters,
@@ -73,6 +90,12 @@ export function DataTable<TData, TValue>({
       globalFilter,
     },
   })
+
+  React.useEffect(() => {
+    if (isServerSide) {
+      table.setPageSize(pageSize)
+    }
+  }, [pageSize, isServerSide])
 
   return (
         <div className="bg-white">
@@ -132,7 +155,15 @@ export function DataTable<TData, TValue>({
       </Table>
     </div>
 
-<DataTablePagination table={table} />
+<DataTablePagination 
+        table={table} 
+        totlaRows={totalRows} 
+        isServerSide={isServerSide}
+        onPageChange={onPageChange}
+        currentPage={currentPage}
+        hasNextPage={hasNextPage}
+        onPageSizeChange={onPageSizeChange}
+      />
     </div>
   )
 }
