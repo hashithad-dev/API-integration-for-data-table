@@ -11,6 +11,7 @@ export interface Product {
   Price: number
   DiscountPercentage: number
   Stock: number
+  Image?: string
 }
 
 export interface PaginationResponse<T> {
@@ -47,6 +48,21 @@ export const productApi = {
 
   populateProducts: async (): Promise<{ message: string, count: number }> => {
     const response = await axios.post(`${API_BASE_URL}/products/populate`)
+    return response.data
+  },
+
+  createProduct: async (productData: Omit<Product, '_id'>): Promise<Product> => {
+    const response = await axios.post(`${API_BASE_URL}/products`, productData)
+    return response.data
+  },
+
+  deleteProduct: async (id: string): Promise<{ message: string }> => {
+    const response = await axios.delete(`${API_BASE_URL}/products/${id}`)
+    return response.data
+  },
+
+  updateProduct: async (id: string, productData: Partial<Product>): Promise<Product> => {
+    const response = await axios.put(`${API_BASE_URL}/products/${id}`, productData)
     return response.data
   }
 }

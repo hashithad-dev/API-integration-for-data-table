@@ -1,6 +1,9 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { Toaster } from 'sonner';
-import DemoPage from "./pages/api-user/page";
+import { useEffect } from 'react';
+import { toast } from 'sonner';
+import { useAuthStore } from './store/authStore';
+import DemoPage from "./pages/product/page";
 import AddUser from "./pages/user/userstable";
 import Layout from "./components/Layout/Layout";
 import AdminLayout from "./components/Layout/AdminLayout";
@@ -12,10 +15,35 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import PublicRoute from "./components/auth/PublicRoute";
 import { ROUTES } from './constants/routes';
 
-function App() {
+function AppContent() {
+  const { isAuthenticated } = useAuthStore()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      if (isAuthenticated) {
+        try {
+          const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/me`, {
+            credentials: 'include'
+          })
+          
+          if (!response.ok) {
+            useAuthStore.getState().logout()
+            toast.error('Session expired. Please login again.')
+            navigate('/login')
+          }
+        } catch (error) {
+          useAuthStore.getState().logout()
+          navigate('/login')
+        }
+      }
+    }, 3000)
+
+    return () => clearInterval(interval)
+  }, [isAuthenticated, navigate])
+
   return (
-    <BrowserRouter>
-      <Routes>
+    <Routes>
         {/* <Route path={ROUTES.HOME} element={<Layout />}>
           <Route index element={<Navigate to={ROUTES.USERS} replace />} />
           <Route path="payments" element={<DemoPage />} />
@@ -31,7 +59,14 @@ function App() {
           <Route path="*" element={<NotFound />} />
         </Route>
         
-      </Routes>
+    </Routes>
+  )
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
       <Toaster position="bottom-center" richColors />
     </BrowserRouter>
   );

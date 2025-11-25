@@ -14,7 +14,8 @@ export const userApi = {
       gender: user.gender || '',
       email: user.email,
       phone: user.phone,
-      dateOfBirth: user.dateofbirth
+      dateOfBirth: user.dateofbirth,
+      image: user.image
     }))
   },
 
@@ -28,7 +29,9 @@ export const userApi = {
         age: parseInt(user.age),
         dateofbirth: user.dateOfBirth,
         email: user.email,
-        phone: user.phone
+        phone: user.phone,
+        gender: user.gender,
+        image: user.image
       })
     })
     const created = await response.json()
@@ -41,6 +44,7 @@ export const userApi = {
       email: created.email,
       phone: created.phone,
       dateOfBirth: created.dateofbirth,
+      image: created.image,
       message: created.message
     }
   },
@@ -55,7 +59,9 @@ export const userApi = {
         age: parseInt(user.age),
         dateofbirth: user.dateOfBirth,
         email: user.email,
-        phone: user.phone
+        phone: user.phone,
+        gender: user.gender,
+        image: user.image
       })
     })
     const updated = await response.json()
@@ -68,6 +74,7 @@ export const userApi = {
       email: updated.email,
       phone: updated.phone,
       dateOfBirth: updated.dateofbirth,
+      image: updated.image,
       message: updated.message
     }
   },

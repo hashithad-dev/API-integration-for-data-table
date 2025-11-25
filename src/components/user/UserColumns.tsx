@@ -56,6 +56,24 @@ export function createUserColumns({ onEditUser, onDeleteUser }: UserColumnsProps
       ),
     },
     {
+      accessorKey: "image",
+      header: "Image",
+      cell: ({ row }) => {
+        const user = row.original
+        return user.image ? (
+          <img 
+            src={user.image} 
+            alt={`${user.firstName} ${user.lastName}`}
+            className="w-10 h-10 rounded-full object-cover"
+          />
+        ) : (
+          <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 text-xs">
+            No Image
+          </div>
+        )
+      },
+    },
+    {
       id: "actions",
       header: "Actions",
       cell: ({ row }) => {

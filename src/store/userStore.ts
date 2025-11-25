@@ -10,6 +10,7 @@ export interface User {
   email: string
   phone: string
   dateOfBirth: string
+  image?: string
 }
 
 interface UserStore {

@@ -26,7 +26,8 @@ export default function UsersPage() {
     gender: '',
     email: '',
     phone: '',
-    dateOfBirth: ''
+    dateOfBirth: '',
+    image: ''
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
 
@@ -52,12 +53,13 @@ export default function UsersPage() {
         gender: formData.gender,
         email: formData.email,
         phone: formData.phone,
-        dateOfBirth: formData.dateOfBirth
+        dateOfBirth: formData.dateOfBirth,
+        image: formData.image
       }
       createUserMutation.mutate(newUser, {
         onSuccess: (data: any) => {
           console.log('Create success data:', data)
-          setFormData({ firstName: '', lastName: '', age: '', gender: '', email: '', phone: '', dateOfBirth: '' })
+          setFormData({ firstName: '', lastName: '', age: '', gender: '', email: '', phone: '', dateOfBirth: '', image: '' })
           setOpen(false)
           toast.success(data.message || '')
         },
@@ -128,7 +130,8 @@ export default function UsersPage() {
       gender: user.gender,
       email: user.email,
       phone: user.phone,
-      dateOfBirth: user.dateOfBirth
+      dateOfBirth: user.dateOfBirth,
+      image: user.image || ''
     })
     setEditOpen(true)
   }
@@ -152,12 +155,13 @@ export default function UsersPage() {
       gender: formData.gender,
       email: formData.email,
       phone: formData.phone,
-      dateOfBirth: formData.dateOfBirth
+      dateOfBirth: formData.dateOfBirth,
+      image: formData.image
     }
     updateUserMutation.mutate(fullUpdatedUser, {
       onSuccess: (data: any) => {
         console.log('Update success data:', data)
-        setFormData({ firstName: '', lastName: '', age: '', gender: '', email: '', phone: '', dateOfBirth: '' })
+        setFormData({ firstName: '', lastName: '', age: '', gender: '', email: '', phone: '', dateOfBirth: '', image: '' })
         setEditOpen(false)
         setEditingUser(null)
         toast.success(data.message || 'User updated successfully!')
@@ -188,7 +192,7 @@ export default function UsersPage() {
             onOpenChange={(isOpen) => {
               setOpen(isOpen)
               if (isOpen) {
-                setFormData({ firstName: '', lastName: '', age: '', gender: '', email: '', phone: '', dateOfBirth: '' })
+                setFormData({ firstName: '', lastName: '', age: '', gender: '', email: '', phone: '', dateOfBirth: '', image: '' })
                 setErrors({})
               }
             }}

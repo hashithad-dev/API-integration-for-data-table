@@ -7,7 +7,8 @@ export const userSchema = z.object({
   gender: z.string().min(1, "Gender is required"),
   email: z.string().email("Invalid email address"),
   phone: z.string().min(1, "Phone is required"),
-  dateOfBirth: z.string().min(1, "Date of birth is required")
+  dateOfBirth: z.string().min(1, "Date of birth is required"),
+  image: z.string().optional()
 })
 
 export type UserFormData = z.infer<typeof userSchema>

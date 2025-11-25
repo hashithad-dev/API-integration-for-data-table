@@ -43,7 +43,7 @@ export const DeleteIcon: React.FC<DeleteIconProps> = ({ onDelete, className = ''
           </DialogHeader>
           <div className="py-4 text-center">
             <p className="text-sm text-gray-600 leading-relaxed">
-              Are you sure you want to delete this data?
+              Are you sure you want to delete this item?
             </p>
           </div>
           <div className="flex gap-3 pt-4">
@@ -64,8 +64,6 @@ export const DeleteIcon: React.FC<DeleteIconProps> = ({ onDelete, className = ''
           </div>
         </DialogContent>
       </Dialog>
-      
-
     </>
   )
 }

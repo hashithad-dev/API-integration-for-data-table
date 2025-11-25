@@ -5,6 +5,9 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { DataTableColumnHeader } from "../../components/datatable/data-table-column-header"
 import { ViewIcon } from "../../components/reusable/view-icon"
 import { Product } from "../../api/productApi"
+import { Button } from "@/components/ui/button"
+import { FaEdit } from "react-icons/fa"
+import { DeleteIcon } from "../../components/reusable/delete-icon"
 
 // 🔹 Table column definitions for Product
 export const paymentColumns: ColumnDef<Product>[] = [
@@ -105,16 +108,44 @@ export const paymentColumns: ColumnDef<Product>[] = [
     ),
   },
 
-  
+  // 🔹 image
+  {
+    accessorKey: "Image",
+    header: ({ column }) => (
+       <DataTableColumnHeader
+        column={column}
+        title="Image"
+      />
+    ),
+    cell: ({ row }) => {
+      const image = row.getValue("Image") as string
+      return image ? (
+        <img src={image} alt="Product" className="w-12 h-12 object-cover rounded" />
+      ) : (
+        <div className="w-12 h-12 bg-gray-200 rounded flex items-center justify-center text-xs">No Image</div>
+      )
+    },
+  },
 
   // 🔹 Actions column
   {
     id: "actions",
     header: "Actions",
     cell: ({ row }) => {
-      const user = row.original
-      console.log('Product data:', user)
-      return <ViewIcon user={user} />
+      const product = row.original
+      return (
+        <div className="flex items-center gap-1">
+          <ViewIcon user={product} />
+          <Button 
+            variant="ghost" 
+            className="h-8 w-8 p-0 hover:bg-blue-50 hover:text-blue-600" 
+            onClick={() => window.handleEditProduct?.(product)}
+          >
+            <FaEdit className="h-4 w-4" />
+          </Button>
+          <DeleteIcon onDelete={() => window.handleDeleteProduct?.(product._id!)} />
+        </div>
+      )
     },
   },
 ]

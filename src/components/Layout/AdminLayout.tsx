@@ -7,31 +7,31 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
 export default function AdminLayout() {
-  const { isAuthenticated } = useAuthStore()
-  const navigate = useNavigate()
+  // const { isAuthenticated } = useAuthStore()
+  // const navigate = useNavigate()
 
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      if (isAuthenticated) {
-        try {
-          const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/me`, {
-            credentials: 'include'
-          })
+  // useEffect(() => {
+  //   const interval = setInterval(async () => {
+  //     if (isAuthenticated) {
+  //       try {
+  //         const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/me`, {
+  //           credentials: 'include'
+  //         })
           
-          if (!response.ok) {
-            useAuthStore.getState().logout()
-            toast.error('Session expired. Please login again.')
-            navigate('/login')
-          }
-        } catch (error) {
-          useAuthStore.getState().logout()
-          navigate('/login')
-        }
-      }
-    }, 3000)
+  //         if (!response.ok) {
+  //           useAuthStore.getState().logout()
+  //           toast.error('Session expired. Please login again.')
+  //           navigate('/login')
+  //         }
+  //       } catch (error) {
+  //         useAuthStore.getState().logout()
+  //         navigate('/login')
+  //       }
+  //     }
+  //   }, 3000)
 
-    return () => clearInterval(interval)
-  }, [isAuthenticated, navigate])
+  //   return () => clearInterval(interval)
+  // }, [isAuthenticated, navigate])
 
   return (
     <div className="flex h-screen bg-gray-50">
