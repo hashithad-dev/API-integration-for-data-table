@@ -10,7 +10,8 @@ import {
   FaTimes,
   FaUser,
   FaCog,
-  FaSignOutAlt
+  FaSignOutAlt,
+  FaEnvelope
 } from 'react-icons/fa'
 import { MdDashboard } from 'react-icons/md'
 import { useAuthStore } from '@/store/authStore'
@@ -39,6 +40,14 @@ const menuItems = [
     gradient: 'from-violet-500 to-fuchsia-600',
     bgGradient: 'from-violet-50 to-fuchsia-50',
     hoverGradient: 'from-violet-100 to-fuchsia-100'
+  },
+  {
+    path: '/admin/inquiry',
+    label: 'Inquiry',
+    icon: FaEnvelope,
+    gradient: 'from-orange-500 to-red-600',
+    bgGradient: 'from-orange-50 to-red-50',
+    hoverGradient: 'from-orange-100 to-red-100'
   }
 ]
 

@@ -8,6 +8,7 @@ import AddUser from "./pages/user/userstable";
 import Layout from "./components/Layout/Layout";
 import AdminLayout from "./components/Layout/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
+import Inquiry from "./pages/Inquiry";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -56,6 +57,7 @@ function AppContent() {
           <Route index element={<Dashboard />} />
           <Route path="api-users" element={<DemoPage />} />
           <Route path="local-users" element={<AddUser />} />
+          <Route path="inquiry" element={<Inquiry />} />
           <Route path="*" element={<NotFound />} />
         </Route>
         
