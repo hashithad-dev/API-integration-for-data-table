@@ -98,7 +98,7 @@ export function DataTable<TData, TValue>({
   }, [pageSize, isServerSide])
 
   return (
-        <div className="bg-white">
+        <div className="bg-white px-10 py-10">
                   <div className="flex items-center py-4">
         <Input
           placeholder="Search users..."

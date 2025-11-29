@@ -3,23 +3,18 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useNavigate } from 'react-router-dom'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useAuthStore } from '@/store/authStore'
 import { toast } from 'sonner'
 import { useState } from 'react'
-import { Eye, EyeOff } from 'lucide-react'
 
 const registerSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').max(60, 'Name too long'),
   email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  confirmPassword: z.string(),
   role: z.enum(['admin', 'user'], { message: 'Please select a role' })
-}).refine(data => data.password === data.confirmPassword, {
-  message: 'Passwords do not match',
-  path: ['confirmPassword']
+  // password and confirmPassword REMOVED
 })
 
 type RegisterForm = z.infer<typeof registerSchema>
@@ -27,17 +22,21 @@ type RegisterForm = z.infer<typeof registerSchema>
 export default function RegisterForm() {
   const navigate = useNavigate()
   const { register: registerUser, isLoading } = useAuthStore()
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [successMessage, setSuccessMessage] = useState('')
   
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm<RegisterForm>({
-    resolver: zodResolver(registerSchema)
+  const { register, handleSubmit, control, formState: { errors } } = useForm<RegisterForm>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      role: 'user'
+    }
   })
 
   const onSubmit = async (data: RegisterForm) => {
     try {
-      await registerUser(data.name, data.email, data.password, data.role)
-      toast.success('Registration successful! Please login.')
+      await registerUser(data.name, data.email, data.role)
+      toast.success('Registration successful! Check your email for login credentials.')
       navigate('/login')
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Registration failed')
@@ -50,10 +49,17 @@ export default function RegisterForm() {
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl text-center">Create account</CardTitle>
           <CardDescription className="text-center">
-            Enter your details to create your account
+            Create your new account - Password will be sent to your email
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          {/* Success message */}
+          {successMessage && (
+            <div className="px-3 py-2 text-sm text-green-600 border border-green-200 rounded bg-green-50">
+              {successMessage}
+            </div>
+          )}
+          
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="name" className="text-sm font-medium">Full Name</label>
@@ -75,57 +81,33 @@ export default function RegisterForm() {
               />
               {errors.email && <p className="text-red-500 text-xs">{errors.email.message}</p>}
             </div>
-            <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium">Password</label>
-              <div className="relative">
-                <Input 
-                  id="password" 
-                  type={showPassword ? "text" : "password"} 
-                  placeholder="Create a password" 
-                  {...register('password')}
-                />
-                <button
-                  type="button"
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
-              </div>
-              {errors.password && <p className="text-red-500 text-xs">{errors.password.message}</p>}
-            </div>
-            <div className="space-y-2">
-              <label htmlFor="confirmPassword" className="text-sm font-medium">Confirm Password</label>
-              <div className="relative">
-                <Input 
-                  id="confirmPassword" 
-                  type={showConfirmPassword ? "text" : "password"} 
-                  placeholder="Confirm your password" 
-                  {...register('confirmPassword')}
-                />
-                <button
-                  type="button"
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                >
-                  {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
-              </div>
-              {errors.confirmPassword && <p className="text-red-500 text-xs">{errors.confirmPassword.message}</p>}
-            </div>
+
             <div className="space-y-2">
               <label htmlFor="role" className="text-sm font-medium">Role</label>
-              <Select onValueChange={(value) => setValue('role', value as 'admin' | 'user')}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select your role" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="user">User</SelectItem>
-                  <SelectItem value="admin">Admin</SelectItem>
-                </SelectContent>
-              </Select>
+              <Controller
+                name="role"
+                control={control}
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select your role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="user">User</SelectItem>
+                      <SelectItem value="admin">Admin</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
               {errors.role && <p className="text-red-500 text-xs">{errors.role.message}</p>}
             </div>
+            
+            {/* Info message about auto-generated password */}
+            <div className="px-3 py-2 text-sm text-blue-600 border border-blue-200 rounded bg-blue-50">
+              📧 A secure password will be automatically generated and sent to your email
+            </div>
+            
+
             <Button type="submit" className="w-full theme-bg hover:theme-bg-dark text-white" size="lg" disabled={isLoading}>
               {isLoading ? 'Creating Account...' : 'Create Account'}
             </Button>

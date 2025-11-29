@@ -19,7 +19,16 @@ export default function UsersPage() {
   const [editOpen, setEditOpen] = useState(false)
   const [editingUser, setEditingUser] = useState<User | null>(null)
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    firstName: string;
+    lastName: string;
+    age: string;
+    gender: string;
+    email: string;
+    phone: string;
+    dateOfBirth: string;
+    image?: string;
+  }>({
     firstName: '',
     lastName: '',
     age: '',

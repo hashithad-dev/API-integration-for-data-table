@@ -13,7 +13,7 @@ interface AuthStore {
   user: AuthUser | null
   isAuthenticated: boolean
   isLoading: boolean
-  register: (name: string, email: string, password: string) => Promise<void>
+  register: (name: string, email: string, role: string) => Promise<void>
   login: (email: string, password: string) => Promise<void>
   logout: () => Promise<void>
   checkAuth: () => Promise<void>
@@ -30,14 +30,13 @@ export const useAuthStore = create<AuthStore>()(
       isAuthenticated: false,
       isLoading: false,
 
-      register: async (name: string, email: string, password: string) => {
+      register: async (name: string, email: string, role: string) => {
         set({ isLoading: true })
         try {
           const response = await fetch(`${API_URL}/api/auth/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({ name, email, password })
+            body: JSON.stringify({ name, email, role })
           })
 
           if (!response.ok) {
@@ -45,7 +44,8 @@ export const useAuthStore = create<AuthStore>()(
             throw new Error(error.message || 'Registration failed')
           }
 
-          set({ isLoading: false })
+          const data = await response.json()
+          set({ user: data.user, isAuthenticated: true, isLoading: false })
         } catch (error) {
           set({ isLoading: false })
           throw error
