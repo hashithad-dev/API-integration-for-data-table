@@ -1,12 +1,21 @@
 import { ROUTES } from './routes'
 
-export const NAV_ITEMS = [
+export interface NavItem {
+  path: string
+  label: string
+}
+
+export const NAV_ITEMS: NavItem[] = [
   {
-    path: ROUTES.USERS,
-    label: 'Users'
+    path: ROUTES.ADMIN_API_USERS,
+    label: 'API Users'
   },
   {
-    path: ROUTES.PAYMENTS,
-    label: 'API Products'
+    path: ROUTES.ADMIN_LOCAL_USERS,
+    label: 'Local Users'
+  },
+  {
+    path: ROUTES.INQUIRY,
+    label: 'Inquiry'
   }
 ] as const

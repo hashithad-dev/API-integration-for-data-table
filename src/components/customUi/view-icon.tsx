@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dialog'
 
 interface User {
-  id: string | number
+  id?: string | number
   firstName?: string
   lastName?: string
   age?: string | number
@@ -22,6 +22,15 @@ interface User {
   price?: number
   discountPercentage?: number
   stock?: number
+  // Product properties
+  _id?: string
+  ID?: number
+  Title?: string
+  Category?: string
+  Price?: number
+  DiscountPercentage?: number
+  Stock?: number
+  Image?: string
 }
 
 interface ViewIconProps {

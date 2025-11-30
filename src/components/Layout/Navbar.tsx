@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { NAV_ITEMS } from '../../constants/navItems'
+import { NAV_ITEMS, type NavItem } from '../../constants/navItems'
 import { Button } from '@/components/ui/button'
 import { FaMoon, FaSun } from 'react-icons/fa'
 import { useTheme } from '../../contexts/ThemeContext'

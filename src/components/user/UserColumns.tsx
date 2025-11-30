@@ -1,9 +1,9 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { Button } from "@/components/ui/button"
 import { FaEdit } from "react-icons/fa"
-import { DataTableColumnHeader } from "../datatable/data-table-column-header"
-import { DeleteIcon } from "../reusable/delete-icon"
-import { ViewIcon } from "../reusable/view-icon"
+import { DataTableColumnHeader } from "../customUi/data-table-column-header"
+import { DeleteIcon } from "../customUi/delete-icon"
+import { ViewIcon } from "../customUi/view-icon"
 import { User } from "../../store/userStore"
 
 interface UserColumnsProps {

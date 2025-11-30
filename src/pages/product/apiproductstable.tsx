@@ -1,13 +1,20 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
+
+declare global {
+  interface Window {
+    handleEditProduct?: (product: Product) => void
+    handleDeleteProduct?: (id: string) => void
+  }
+}
 import { Checkbox } from "@/components/ui/checkbox"
-import { DataTableColumnHeader } from "../../components/datatable/data-table-column-header"
-import { ViewIcon } from "../../components/reusable/view-icon"
+import { DataTableColumnHeader } from "../../components/customUi/data-table-column-header"
+import { ViewIcon } from "../../components/customUi/view-icon"
 import { Product } from "../../api/productApi"
 import { Button } from "@/components/ui/button"
 import { FaEdit } from "react-icons/fa"
-import { DeleteIcon } from "../../components/reusable/delete-icon"
+import { DeleteIcon } from "../../components/customUi/delete-icon"
 
 // 🔹 Table column definitions for Product
 export const paymentColumns: ColumnDef<Product>[] = [

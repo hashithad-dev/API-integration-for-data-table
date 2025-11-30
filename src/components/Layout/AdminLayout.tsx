@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom'
-import Sidebar from './Sidebar'
-import Header from './Header'
+import Sidebar from '../../pages/Dashboard/Sidebar'
+import Header from '../../pages/Dashboard/Header'
 import { useEffect } from 'react'
 import { useAuthStore } from '@/store/authStore'
 import { useNavigate } from 'react-router-dom'
